@@ -1,0 +1,8 @@
+.carousel .slide img {
+  max-height: 80vh;  /* change this to whatever you want */
+  width: 100;
+}
+
+.carousel{
+  margin-top: 60px !important;
+}

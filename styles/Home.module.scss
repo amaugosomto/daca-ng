@@ -1,0 +1,91 @@
+$primary-color: #6D0EB5;
+$light-grey: #636363;
+
+.container {
+  min-height: 100vh;
+  padding: 0 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.main{
+  height: 80vh;
+}
+
+.center {
+  text-align: center;
+}
+
+#welcome {
+  margin-top: 30px;
+}
+
+#welcomeTitle {
+  font-weight: 700;
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  position: relative;
+}
+#welcomeMessage{
+  font-size: 1rem;
+  color: #636363;
+}
+
+#membership{
+  margin-top: 40px;
+  background: black;
+  background: $light-grey;  /* fallback colour. Make sure this is just one solid colour. */
+  background: -webkit-linear-gradient(rgba(48, 48, 54, 0.8), rgba(44, 33, 36, 0.8)), url("/images/childrenGroup.jpg");
+  background: linear-gradient(rgba(48, 48, 54, 0.8), rgba(44, 33, 36, 0.8)), url("/images/childrenGroup.jpg"); 
+  height: 70%;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  text-align: center;
+  
+  & > div {
+    display: flex;
+    height: 100%;
+    align-items: center;
+  }
+
+  h6{
+    text-transform: uppercase;
+    color: #F49642;
+    font-size: 1.3rem;
+    margin-bottom: 2.5rem;
+  }
+
+  #innerCont h4{
+    color: #fff;
+    font-weight: 500;
+    font-size: 2rem;
+  }
+
+  button{
+    background: $primary-color;
+    color: #fff;
+    padding: 10px 30px;
+    margin-top: 30px;
+  }
+  
+}
+
+.cardRoot{
+  background: transparent;
+}
+
+#sermons{
+  padding-top: 40px;
+  background: lighten( $light-grey, 58%);
+}
+
+@media (min-width: 960px){
+  .midWidth{
+    max-width: 1100px !important;
+    text-align: center;
+  }
+}
