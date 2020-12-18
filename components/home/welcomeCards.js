@@ -12,7 +12,7 @@ import { useN01TextInfoContentStyles } from '@mui-treasury/styles/textInfoConten
 import { useBouncyShadowStyles } from '@mui-treasury/styles/shadow/bouncy';
 import Grid from '@material-ui/core/Grid';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(({breakpoints}) => ({
   root: {
     margin: 'auto',
     boxShadow: 'none',
@@ -27,6 +27,13 @@ const useStyles = makeStyles(() => ({
   },
   cards: {
     marginTop: "30px"
+  },
+  grid: {
+    width: '100%',
+    [breakpoints.down('md')]:{
+      padding: '0 25px !important',
+      marginTop: '30px'
+    }
   }
 }));
 
@@ -38,7 +45,7 @@ export const WelcomeCards = React.memo(function NewsCard() {
   return (
     <div className={styles.cards}>
       <Grid container spacing={4}>
-        <Grid item sm={12} md={4}>
+        <Grid item sm={12} md={4} className={styles.grid}>
           <Card className={cx(styles.root, shadowStyles.root)}>
             <CardMedia
               classes={mediaStyles}
@@ -60,7 +67,7 @@ export const WelcomeCards = React.memo(function NewsCard() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item sm={12} md={4}>
+        <Grid item sm={12} md={4} className={styles.grid}>
           <Card className={cx(styles.root, shadowStyles.root)}>
             <CardMedia
               classes={mediaStyles}
@@ -82,7 +89,7 @@ export const WelcomeCards = React.memo(function NewsCard() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item sm={12} md={4}>
+        <Grid item sm={12} md={4} className={styles.grid}>
           <Card className={cx(styles.root, shadowStyles.root)}>
             <CardMedia
               classes={mediaStyles}

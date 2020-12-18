@@ -22,7 +22,7 @@ import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
 
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(({breakpoints}) => ({
   root: {
     margin: 'auto',
     boxShadow: 'none',
@@ -123,6 +123,16 @@ const useStyles = makeStyles(() => ({
         fontWeight: '500'
       }
     }
+  },
+  grid: {
+    width: '100%',
+    [breakpoints.down('sm')]:{
+      padding: '0 25px !important',
+      marginTop: '20px'
+    }
+  },
+  avartar: {
+    textAlign: 'center'
   }
 }));
 
@@ -134,13 +144,13 @@ export const SermonCards = React.memo(function NewsCard() {
   return (
     <div className={styles.cards}>
       <Grid container spacing={4}>
-        <Grid item sm={12} md={4}>
+        <Grid item sm={12} md={4} className={styles.grid}>
           <Card className={cx(styles.root, styles.cardRoot)} >
             <CardMedia classes={mediaStyles} className={styles.image}
               image='/images/newWayOfLiving.jpg'
             />
             <CardContent className={styles.content}>
-              <div className={cx(styles.logo, 'avartar')} >
+              <div className={cx(styles.logo, 'avartar', styles.avartar)} >
                 <Typography variant="h5" className="avartar">
                   13
                 </Typography>
@@ -210,7 +220,7 @@ export const SermonCards = React.memo(function NewsCard() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item sm={12} md={4}>
+        <Grid item sm={12} md={4} className={styles.grid}>
           <Card className={cx(styles.root, styles.cardRoot)} >
             <CardMedia
               classes={mediaStyles}
@@ -218,7 +228,7 @@ export const SermonCards = React.memo(function NewsCard() {
               image='/images/toBeSaved.jpg'
             />
             <CardContent className={styles.content}>
-            <div className={cx(styles.logo, 'avartar')} >
+            <div className={cx(styles.logo, 'avartar', styles.avartar)} >
                 <Typography variant="h5" className="avartar">
                   15
                 </Typography>
@@ -288,7 +298,7 @@ export const SermonCards = React.memo(function NewsCard() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item sm={12} md={4}>
+        <Grid item sm={12} md={4} className={styles.grid}>
           <Card className={cx(styles.root, styles.cardRoot)} >
             <CardMedia
               classes={mediaStyles}
@@ -296,7 +306,7 @@ export const SermonCards = React.memo(function NewsCard() {
               image='/images/theSecondComing.jpg'
             />
             <CardContent className={styles.content}>
-            <div className={cx(styles.logo, 'avartar')} >
+            <div className={cx(styles.logo, 'avartar', styles.avartar)} >
                 <Typography variant="h5" className="avartar">
                   30
                 </Typography>
