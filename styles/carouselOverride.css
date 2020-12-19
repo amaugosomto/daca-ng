@@ -2,7 +2,9 @@
   max-height: 80vh;  /* change this to whatever you want */
   width: 100;
 }
-
+.carousel .slide {
+  background: none !important;
+}
 .carousel{
   margin-top: 60px !important;
 }

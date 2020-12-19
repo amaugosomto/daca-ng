@@ -104,7 +104,8 @@ const useStyles = makeStyles(({breakpoints}) => ({
 
     '& div, & span': {
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      // fontSize: '1rem'
     },
     
     '& svg': {
@@ -120,7 +121,7 @@ const useStyles = makeStyles(({breakpoints}) => ({
         color: '#636363',
         fontStyle: 'italic',
         marginLeft: '10px',
-        fontWeight: '500'
+        fontWeight: '500',
       }
     }
   },
@@ -196,7 +197,7 @@ export const SermonCards = React.memo(function NewsCard() {
                   <Icon>
                     <Person />
                   </Icon>
-                  <Typography variant="p" className="pTitle">
+                  <Typography variant="caption" className="pTitle">
                     Sermon From: <span>Pst. Timothy Benedict</span>
                   </Typography>
                 </div>
@@ -204,7 +205,7 @@ export const SermonCards = React.memo(function NewsCard() {
                   <Icon>
                     <Category />
                   </Icon>
-                  <Typography variant="p" className="pTitle">
+                  <Typography variant="caption" className="pTitle">
                     Category: <span>God, Pray</span>
                   </Typography>
                 </div>
@@ -212,7 +213,7 @@ export const SermonCards = React.memo(function NewsCard() {
                   <Icon>
                     <Watch />
                   </Icon>
-                  <Typography variant="p" className="pTitle">
+                  <Typography variant="caption" className="pTitle">
                     August 10 0n: <span>9:00 am - 11:00 am</span>
                   </Typography>
                 </div>
@@ -274,7 +275,7 @@ export const SermonCards = React.memo(function NewsCard() {
                   <Icon>
                     <Person />
                   </Icon>
-                  <Typography variant="p" className="pTitle">
+                  <Typography variant="caption" className="pTitle">
                     Sermon From: <span>Pst. Lilian Benedict</span>
                   </Typography>
                 </div>
@@ -282,7 +283,7 @@ export const SermonCards = React.memo(function NewsCard() {
                   <Icon>
                     <Category />
                   </Icon>
-                  <Typography variant="p" className="pTitle">
+                  <Typography variant="caption" className="pTitle">
                     Category: <span>God, Pray</span>
                   </Typography>
                 </div>
@@ -290,7 +291,7 @@ export const SermonCards = React.memo(function NewsCard() {
                   <Icon>
                     <Watch />
                   </Icon>
-                  <Typography variant="p" className="pTitle">
+                  <Typography variant="caption" className="pTitle">
                     August 15 0n: <span>10:00 am - 05:00 pm</span>
                   </Typography>
                 </div>
@@ -352,7 +353,7 @@ export const SermonCards = React.memo(function NewsCard() {
                   <Icon>
                     <Person />
                   </Icon>
-                  <Typography variant="p" className="pTitle">
+                  <Typography variant="caption" className="pTitle">
                     Sermon From: <span>Pst. Chigozie Onuoha</span>
                   </Typography>
                 </div>
@@ -360,7 +361,7 @@ export const SermonCards = React.memo(function NewsCard() {
                   <Icon>
                     <Category />
                   </Icon>
-                  <Typography variant="p" className="pTitle">
+                  <Typography variant="caption" className="pTitle">
                     Category: <span>God, Pray</span>
                   </Typography>
                 </div>
@@ -368,7 +369,7 @@ export const SermonCards = React.memo(function NewsCard() {
                   <Icon>
                     <Watch />
                   </Icon>
-                  <Typography variant="p" className="pTitle">
+                  <Typography variant="caption" className="pTitle">
                     August 30 0n: <span>12:00 pm - 04:00 pm</span>
                   </Typography>
                 </div>

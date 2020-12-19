@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head'
 import styles from '../styles/Home.module.scss'
 import Header from '../components/home/Header';
@@ -6,8 +7,24 @@ import SermonCards from '../components/home/sermonCards';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel'; 
 import {CssBaseline, Container, Typography, Button} from '@material-ui/core';
+import WithExternalControls from '../components/home/UpcomingEvents'
+import { useRouter as router } from 'next/router'
 
 export default function Home() {
+  let [pageLoaded, setPageLoaded] = useState(false);
+  let [flipImage, setFlipImage] = useState(false);
+
+  useEffect(() => {
+    flipLoader();
+  });
+
+  const flipLoader = () => {
+    setFlipImage(flipImage = true);
+    setTimeout(function () {
+      setPageLoaded(pageLoaded = true);
+    }, 1000);
+  }
+
   return (
     <div>
       <Head>
@@ -22,9 +39,19 @@ export default function Home() {
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></link>
       </Head>
 
-      <main className={styles.main}>
+      <div className={pageLoaded ? styles.hide : ''}>
+        <div style={{position:'relative', height:'100vh', width:'100vw'}}>
+          <CssBaseline />
+          <div className={styles.loader}>
+            <img src="/images/daca-logo.png" className={flipImage ? styles.rotating : ''} alt="daca logo"/>
+          </div>
+        </div>
+      </div>
+
+      <main className={pageLoaded ? styles.main : styles.hide}>
+
         <CssBaseline />
-        <Header></Header>
+        <Header />
         <Carousel infiniteLoop="true" autoPlay transitionTime= "1000" showThumbs={false} showStatus={false}>
           <div>
               <img src="/images/DACA-1.jpg" />
@@ -51,7 +78,7 @@ export default function Home() {
             <Typography variant="h5" gutterBottom id={styles.welcomeTitle} >
               Welcome to Church
             </Typography>
-            <Typography variant="span" id={styles.welcomeMessage}>
+            <Typography variant="caption" id={styles.welcomeMessage}>
               A church isn't a building--it's the people. We meet at 210 Okigwe Road, Opp Glass House, Owerri. You are welcome to join us.
             </Typography>
             <WelcomeCards />
@@ -76,11 +103,17 @@ export default function Home() {
 
         <section id={styles.sermons}>
           <Container maxWidth="md" className={styles.midWidth}>
+            <Typography variant="h5" gutterBottom id={styles.welcomeTitle} >
+              Latest Sermons
+            </Typography>
             <SermonCards />
           </Container>
-          
+        </section>
+
+        <section>
+          <WithExternalControls />
         </section>
       </main>
     </div>
-  )
+  );
 }

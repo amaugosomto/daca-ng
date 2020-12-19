@@ -1,19 +1,21 @@
 import React, {useEffect} from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
+import cx from 'clsx';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import Link from 'next/link';
-import Badge from '@material-ui/core/Badge';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import MailIcon from '@material-ui/icons/Mail';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import {Button} from '@material-ui/core';
+import { useRouter as router } from 'next/router'
+
+const isActive = (href) => {
+  return router().pathname === href;
+}
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -43,10 +45,16 @@ const useStyles = makeStyles((theme) => ({
   button: {
     marginRight: theme.spacing(2),
     '& a': {fontWeight: "400"},
-    '& a:hover': {
+    '&:hover a': {
       color: "#6D0EB5",
       fontWeight: "500"
     }
+  },
+  active: {
+      color: "#6D0EB5",
+      '& a': {
+        fontWeight: 500
+      }
   },
   donateBtn: {
     backgroundColor: "#6D0EB5 !important",
@@ -192,29 +200,29 @@ export default function PrimarySearchAppBar() {
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <Button size="small" className={classes.button} color="inherit">
+            <Button size="small" className={cx(classes.button, isActive('/') ? classes.active : '')} color="inherit">
               <Link href="/">
                 <a>Home</a>
               </Link>
             </Button>
-            <Button size="small" className={classes.button} color="inherit">
+            <Button size="small" className={cx(classes.button, isActive('aboutus') ? classes.active : '')} color="inherit">
               <Link href="/">
                 <a>About Us</a>
               </Link>
             </Button>
-            <Button size="small" className={classes.button} color="inherit">
+            <Button size="small" className={cx(classes.button, isActive('events') ? classes.active : '')} color="inherit">
               <Link href="/">
                 <a>Live Events</a>
               </Link></Button>
-            <Button size="small" className={classes.button} color="inherit">
+            <Button size="small" className={cx(classes.button, isActive('download') ? classes.active : '')} color="inherit">
               <Link href="/">
                 <a>Download Messages</a>
               </Link></Button>
-            <Button size="small" className={classes.button} color="inherit">
+            <Button size="small" className={cx(classes.button, isActive('store') ? classes.active : '')} color="inherit">
               <Link href="/">
                 <a>Store</a>
               </Link></Button>
-            <Button size="small" className={classes.button} color="inherit">
+            <Button size="small" className={cx(classes.button, isActive('contactus') ? classes.active : '')} color="inherit">
               <Link href="/">
                 <a>Contact Us</a>
               </Link>
