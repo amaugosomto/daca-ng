@@ -8,3 +8,6 @@
 .carousel{
   margin-top: 60px !important;
 }
+.upcomingCarousel .slide{
+  padding: 0 5px !important;
+}

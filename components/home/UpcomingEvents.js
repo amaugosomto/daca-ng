@@ -8,6 +8,7 @@ import Color from 'color';
 import Grid from '@material-ui/core/Grid';
 import { Button } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
+import cx from 'clsx';
 
 const $primaryColor = '#6D0EB5';
 const $lightGrey = '#636363';
@@ -25,7 +26,7 @@ const useStyles = makeStyles(({breakpoints}) => ({
     textAlign: 'center',
     display: 'flex',
     justifyContent: 'space-between',
-    padding: '0 100px',
+    padding: '0 6rem',
     alignItems: 'center',
     textAlign: 'left',
   
@@ -42,6 +43,10 @@ const useStyles = makeStyles(({breakpoints}) => ({
       fontSize: '1.3rem',
     },
   
+    '& .icons': {
+      display: 'flex'
+    },
+
     '& svg': {
       fontSize: '50px',
       color:'rgb(219, 214, 214)',
@@ -49,6 +54,24 @@ const useStyles = makeStyles(({breakpoints}) => ({
   
       '&:hover': {
         color: '#fff'
+      }
+    },
+
+    [breakpoints.down('sm')]: {
+      padding: '0 2rem'
+    },
+
+    [breakpoints.only('xs')]: {
+      padding: '0 1.5rem',
+      '& h4': {
+        fontSize: '1rem',
+      },
+      '& p': {
+        fontSize: '.8rem',
+      },
+      height: '150px',
+      '& svg': {
+        fontSize: '1.3rem'
       }
     }
   },
@@ -73,11 +96,17 @@ const useStyles = makeStyles(({breakpoints}) => ({
       '& h5': {
         fontWeight: '500',
         marginBottom: '15px',
-        fontSize: '1.6rem'
+        fontSize: '1.6rem',
+
+        [breakpoints.only('xs')]: {
+          fontSize: '1rem',
+          marginBottom: '10px',
+        }
       },
 
       '& .icons': {
         display: 'flex',
+        flexWrap: 'wrap',
 
         '& span': {
           display: 'flex',
@@ -86,7 +115,11 @@ const useStyles = makeStyles(({breakpoints}) => ({
           '& span': {
             color: Color($lightGrey).lighten(0.3).toString(),
             fontSize: '.9rem',
-            fontStyle: 'italic'
+            fontStyle: 'italic',
+
+            [breakpoints.only('xs')]: {
+              fontSize: '.7rem',
+            }
           }
         },
 
@@ -103,14 +136,15 @@ const useStyles = makeStyles(({breakpoints}) => ({
 
       '& .caption *': {
         fontSize: '.9rem',
-        [breakpoints.down('sm')]: {
-          fontSize: '1.1rem'
+
+        [breakpoints.only('xs')]: {
+          fontSize: '.7rem',
         }
       },
 
       '& .caption': {
         [breakpoints.down('sm')]: {
-          margin: '15px 0'
+          margin: '10px 0'
         }
       },
 
@@ -131,10 +165,15 @@ const useStyles = makeStyles(({breakpoints}) => ({
             color: $primaryColor
           }
         },
-        [breakpoints.down('sm')]: {
-          fontSize: '1rem'
+
+        [breakpoints.only('xs')]: {
+          fontSize: '.7rem',
         }
+      },
+      [breakpoints.down('sm')]: {
+        padding: '10px 20px'
       }
+
     },
 
     '& .findMore': {
@@ -152,19 +191,24 @@ const useStyles = makeStyles(({breakpoints}) => ({
           color: '#fff'
         },
         [breakpoints.down('sm')]: {
-          fontSize: '1.3rem',
-          padding: '10px 35px'
+          padding: '10px 20px'
+        },
+
+        [breakpoints.only('xs')]: {
+          fontSize: '.7rem',
+          padding: '10px 10px'
         }
       }
     }
   },
   grid: {
+    '& > div': {
+      marginRight: '30px'
+    },
     [breakpoints.down('sm')]: {
-      padding: '0 25px !important',
       marginTop: '20px',
-
       '& img': {
-        height: '300px'
+        height: '250px'
       }
     }
   }
@@ -194,7 +238,7 @@ function WithExternalControlsv2() {
             }
           />
         </div>
-        <div>
+        <div className="icons">
           <KeyboardArrowLeft  onClick={() => setCurrentSlide( currentSlide - 1)} />
           <KeyboardArrowRight onClick={() => setCurrentSlide( currentSlide + 1)} />
         </div>
@@ -202,7 +246,7 @@ function WithExternalControlsv2() {
 
       <Container>
         <Carousel transitionTime={1000} interval={4000} infiniteLoop selectedItem={currentSlide} onChange={updateCurrentSlide} className={styles.carousel} stopOnHover={true}
-          showThumbs={false} showStatus={false} showArrows={false} showIndicators={false} className={styles.grid}>
+          showThumbs={false} showStatus={false} showArrows={false} showIndicators={false} className={cx(styles.grid, 'upcomingCarousel')}>
           <div>
             <div className={styles.carouselItem}>
               <Grid container spacing={3}>

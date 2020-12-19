@@ -91,13 +91,24 @@ const useStyles = makeStyles(({breakpoints}) => ({
 
       '& svg': {
         color: Color("#636363").lighten(0.5).toString(),
-        fontSize: '20px'
+        fontSize: '20px',
+
+        [breakpoints.only('xs')]: {
+          fontSize: '15px',
+        }
       }
     }
   },
   title: {
     textAlign: 'left',
-    marginTop: '10px'
+    marginTop: '10px',
+
+    [breakpoints.only('xs')]: {
+      marginTop: '0',
+      '& *': {
+        fontSize: '1rem'
+      }
+    }
   },
   info: {
     marginTop: '20px',
@@ -123,6 +134,10 @@ const useStyles = makeStyles(({breakpoints}) => ({
         marginLeft: '10px',
         fontWeight: '500',
       }
+    },
+
+    [breakpoints.only('xs')]: {
+      marginTop: '5px'
     }
   },
   grid: {
