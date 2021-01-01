@@ -11,10 +11,16 @@ import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import {Button} from '@material-ui/core';
-import { useRouter as router } from 'next/router'
+import { useRouter as router } from 'next/router';
 
 const isActive = (href) => {
   return router().pathname === href;
+}
+
+const isClassRoom = () => {
+  let pathName = router().pathname.toLowerCase();
+
+  return pathName.includes('/classes') || pathName.includes('/auth');
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -96,6 +102,9 @@ const useStyles = makeStyles((theme) => ({
   },
   image: {
     width: `${theme.spacing(1)}rem`
+  },
+  hide: {
+    display: 'none'
   }
 }));
 
@@ -152,33 +161,58 @@ export default function PrimarySearchAppBar() {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
-        <Link href="/">
+        <Link href="/" 
+          className={cx(classes.button, isActive('/') ? classes.active : '')}>
           <a>Home</a>
         </Link>
       </MenuItem>
       <MenuItem>
-        <Link href="/">
+        <Link href="/" 
+          className={cx(classes.button, 
+            isActive('/aboutus') ? classes.active : '',
+            isClassRoom() ? classes.hide : '')}>
           <a>About Us</a>
         </Link>
       </MenuItem>
       <MenuItem>
-        <Link href="/">
-          <a>Live Events</a>
+        <Link href="/" 
+          className={cx(classes.button, isActive('/events') ? classes.active : '',
+            isClassRoom() ? classes.hide : '')}>
+          <a>Events</a>
         </Link>
       </MenuItem>
       <MenuItem>
-        <Link href="/">
-          <a>Download Messages</a>
+        <Link href="/" 
+          className={cx(classes.button, isActive('/download') ? classes.active : '',
+            isClassRoom() ? classes.hide : '')}>
+          <a>Downloads</a>
         </Link>
       </MenuItem>
       <MenuItem>
-        <Link href="/">
+        <Link href="/" 
+          className={cx(classes.button, isActive('/store') ? classes.active : '',
+            isClassRoom() ? classes.hide : '')}>
           <a>Store</a>
         </Link>
       </MenuItem>
       <MenuItem>
-        <Link href="/">
+        <Link href="/" 
+          className={cx(classes.button, isActive('/contactus') ? classes.active : '',
+            isClassRoom() ? classes.hide : '')}>
           <a>Contact Us</a>
+        </Link>
+      </MenuItem>
+      <MenuItem>
+        <Link href="/Classes" 
+          className={cx(classes.button, isActive('/Classes') ? classes.active : '')}>
+          <a>Classes</a>
+        </Link>
+      </MenuItem>
+      <MenuItem>
+        <Link href="/auth" 
+          className={cx(classes.button, isActive('/auth') ? classes.active : '',
+           !isClassRoom() ? classes.hide : '')}>
+          <a>Login</a>
         </Link>
       </MenuItem>
       <MenuItem>
@@ -200,31 +234,54 @@ export default function PrimarySearchAppBar() {
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <Button size="small" className={cx(classes.button, isActive('/') ? classes.active : '')} color="inherit">
+            <Button size="small" 
+              className={cx(classes.button, isActive('/') ? classes.active : '')} 
+              color="inherit">
               <Link href="/">
                 <a>Home</a>
               </Link>
             </Button>
-            <Button size="small" className={cx(classes.button, isActive('aboutus') ? classes.active : '')} color="inherit">
+            <Button size="small" 
+              className={cx(classes.button, isActive('/aboutus') ? classes.active : '',
+                isClassRoom() ? classes.hide : '')}>
               <Link href="/">
                 <a>About Us</a>
               </Link>
             </Button>
-            <Button size="small" className={cx(classes.button, isActive('events') ? classes.active : '')} color="inherit">
+            <Button size="small" 
+              className={cx(classes.button, isActive('/events') ? classes.active : '',
+                isClassRoom() ? classes.hide : '')}>
               <Link href="/">
-                <a>Live Events</a>
+                <a>Events</a>
               </Link></Button>
-            <Button size="small" className={cx(classes.button, isActive('download') ? classes.active : '')} color="inherit">
+            <Button size="small" 
+              className={cx(classes.button, isActive('/download') ? classes.active : '',
+                isClassRoom() ? classes.hide : '')}>
               <Link href="/">
-                <a>Download Messages</a>
+                <a>Downloads</a>
               </Link></Button>
-            <Button size="small" className={cx(classes.button, isActive('store') ? classes.active : '')} color="inherit">
+            <Button size="small" 
+              className={cx(classes.button, isActive('/store') ? classes.active : '',
+                isClassRoom() ? classes.hide : '')}>
               <Link href="/">
                 <a>Store</a>
               </Link></Button>
-            <Button size="small" className={cx(classes.button, isActive('contactus') ? classes.active : '')} color="inherit">
+            <Button size="small" 
+              className={cx(classes.button, isActive('/contactus') ? classes.active : '',
+                isClassRoom() ? classes.hide : '')}>
               <Link href="/">
                 <a>Contact Us</a>
+              </Link>
+            </Button>
+            <Button size="small" className={cx(classes.button, isActive('/Classes') ? classes.active : '')} color="inherit">
+              <Link href="/Classes">
+                <a>Classes</a>
+              </Link>
+            </Button>
+            <Button size="small" className={cx(classes.button, isActive('/auth') ? classes.active : '',
+              !isClassRoom() ? classes.hide : '')}>
+              <Link href="/auth">
+                <a>Login</a>
               </Link>
             </Button>
             <IconButton aria-label="show 4 new mails" color="inherit">

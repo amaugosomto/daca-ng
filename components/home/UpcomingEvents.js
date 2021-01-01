@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {useState} from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import Container from '@material-ui/core/Container';
 import TextInfoContent from '@mui-treasury/components/content/textInfo';
