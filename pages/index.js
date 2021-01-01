@@ -5,7 +5,7 @@ import WelcomeCards from '../components/home/welcomeCards';
 import SermonCards from '../components/home/sermonCards';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel'; 
-import {CssBaseline, Container, Typography, Button} from '@material-ui/core';
+import { Container, Typography, Button} from '@material-ui/core';
 import WithExternalControls from '../components/home/UpcomingEvents'
 import HomeLayout from '../components/home/HomeLayout'
 
@@ -41,7 +41,7 @@ export default function Home() {
 
         <div className={pageLoaded ? styles.hide : ''}>
           <div style={{position:'relative', height:'100vh', width:'100vw'}}>
-            <CssBaseline />
+            
             <div className={styles.loader}>
               <img src="/images/daca-logo.png" className={flipImage ? styles.rotating : ''} alt="daca logo"/>
             </div>

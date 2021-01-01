@@ -28,7 +28,7 @@ const Footer = () => (
     <Container maxWidth="lg" className={styles.topFooter}>
       <Grid container>
         <Grid item xs={12} sm={6} className={styles.footerGrid}>
-          <img src="/images/daca-logo.png" alt="daca logo" srcset="" className={styles.footerImage} />
+          <img src="/images/daca-logo.png" alt="daca logo" srcSet="" className={styles.footerImage} />
           <Typography variant="caption">
             Our Core values are: To model the nature of God (love) and a culture of excellence while delivering selfless service.
           </Typography>

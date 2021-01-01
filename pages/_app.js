@@ -1,6 +1,7 @@
 import React from 'react';
 import { Provider } from "react-redux";
 import store from '../redux/store';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import '../styles/globals.css'
 import '../styles/carouselOverride.css'
 function MyApp({ Component, pageProps}) {
@@ -14,6 +15,7 @@ function MyApp({ Component, pageProps}) {
 
   return (
     <Provider store={store}>
+      <CssBaseline />
       <Component {...pageProps} />
     </Provider>
   )
