@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head'
-import useStyles from './classesStyles';
+import useStyles from '../../styles/classesStyles';
 import {Container, Typography, Button, Grid, Tooltip} from '@material-ui/core';
 import cx from 'clsx';
 import Card from '@material-ui/core/Card';
