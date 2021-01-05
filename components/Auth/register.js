@@ -142,4 +142,4 @@ const mapDispatchToProps = {
   authLogin
 }
 
-export default connect(() => {}, mapDispatchToProps)(Register);
+export default connect(function(){return {}}, mapDispatchToProps)(Register);

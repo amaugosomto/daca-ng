@@ -107,6 +107,10 @@ $light-grey: #636363;
   display: none;
 }
 
+.show{
+  display: block;
+}
+
 .footer{
   background: lighten($color: #000000, $amount: 9);
 

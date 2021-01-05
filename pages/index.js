@@ -39,16 +39,9 @@ export default function Home() {
           <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></link>
         </Head>
 
-        <div className={pageLoaded ? styles.hide : ''}>
-          <div style={{position:'relative', height:'100vh', width:'100vw'}}>
-            
-            <div className={styles.loader}>
-              <img src="/images/daca-logo.png" className={flipImage ? styles.rotating : ''} alt="daca logo"/>
-            </div>
-          </div>
-        </div>
+        
 
-        <main className={pageLoaded ? styles.main : styles.hide}>
+        <main className={styles.main}>
 
           <Carousel infiniteLoop="true" autoPlay transitionTime= "1000" showThumbs={false} showStatus={false}>
             <div>
