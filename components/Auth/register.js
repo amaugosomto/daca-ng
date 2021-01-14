@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';;
 import TextField from '@material-ui/core/TextField';
@@ -12,6 +12,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { authLogin } from "../../redux/actions/authActions";
 import {connect} from 'react-redux';
 import { LockOpen } from '@material-ui/icons';
+import validators from '../../middlewares/validators';
+import Swal from 'sweetalert2';
+import axiosConfig from '../../middlewares/axiosConfig';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,6 +51,191 @@ const useStyles = makeStyles((theme) => ({
 const Register = function({authLogin}) {
   const classes = useStyles();
 
+  const [signUpText, setSignUpText] = useState("SIGN UP");
+  const [signUpButtonState, setSignUpButtonState] = useState(false);
+
+  const [firstNameErrorMsg, setfirstNameErrorMsg] = useState("");
+  const [firstNameError, setfirstNameError] = useState(false);
+
+  const [lastNameErrorMsg, setlastNameErrorMsg] = useState("");
+  const [lastNameError, setlastNameError] = useState(false);
+
+  const [emailErrorMsg, setemailErrorMsg] = useState("");
+  const [emailError, setemailError] = useState(false);
+
+  const [passowrdErrorMsg, setpassowrdErrorMsg] = useState("");
+  const [passowrdError, setpassowrdError] = useState(false);
+
+  const [confirmPasswordErrorMsg, setconfirmPasswordErrorMsg] = useState("");
+  const [confirmPasswordError, setconfirmPasswordError] = useState(false);
+
+  const checkFirstName = (e) => {
+    e.preventDefault();
+    
+    let id = 'firstName';
+
+    let hasContent = validators.isRequired(id);
+    if (hasContent){
+      setfirstNameError(hasContent);
+      setfirstNameErrorMsg('field is required');
+
+      return false;
+    }
+
+    setfirstNameError(false);
+    setfirstNameErrorMsg('');
+    
+    return true;
+  }
+
+  const checkLastName = (e) => {
+    e.preventDefault();
+    
+    let id = 'lastName';
+
+    let hasContent = validators.isRequired(id);
+    if (hasContent){
+      setlastNameError(hasContent);
+      setlastNameErrorMsg('field is required');
+
+      return false;
+    }
+
+    setlastNameError(false);
+    setlastNameErrorMsg('');
+    
+    return true;
+  }
+
+  const checkEmail = (e) => {
+    e.preventDefault();
+    
+    let id = 'email';
+
+    let hasContent = validators.isRequired(id);
+    if (hasContent){
+      setemailError(hasContent);
+      setemailErrorMsg('field is required');
+      return false;
+    }
+
+    let isValidEmail = validators.isValidEmail(id);
+    if (isValidEmail){
+      setemailError(isValidEmail);
+      setemailErrorMsg('email does not look right');
+      return false;
+    }
+
+    setemailError(false);
+    setemailErrorMsg('');
+
+    return true;
+  }
+
+  const checkPassword = (e) => {
+    e.preventDefault();
+    
+    let id = 'password';
+
+    let hasContent = validators.isRequired(id);
+    if (hasContent){
+      setpassowrdError(hasContent);
+      setpassowrdErrorMsg('field is required');
+      return false;
+    }
+
+    let isStrongPassword = validators.isStrongPassword(id);
+    if (isStrongPassword){
+      setpassowrdError(isStrongPassword);
+      setpassowrdErrorMsg('password must have 1 lowercase, 1 uppercase, 1 special character and 8 characters long');
+      return false;
+    }
+
+    setpassowrdError(false);
+    setpassowrdErrorMsg('');
+
+    return true;
+  }
+
+  const checkConfirmPassword = (e) => {
+    e.preventDefault();
+    
+    let id = 'confirmPassword';
+
+    let hasContent = validators.isRequired(id);
+    if (hasContent){
+      setconfirmPasswordError(hasContent);
+      setconfirmPasswordErrorMsg('field is required');
+      return false;
+    }
+
+    let isSamePassword = validators.isSamePassword('password', id);
+    if (isSamePassword){
+      setconfirmPasswordError(isSamePassword);
+      setconfirmPasswordErrorMsg('passwords must match');
+      return false;
+    }
+
+    setconfirmPasswordError(false);
+    setconfirmPasswordErrorMsg('');
+
+    return true;
+  }
+
+  const submit = async (e) => {
+    e.preventDefault();
+
+    if (!checkFirstName() || !checkLastName() || !checkEmail() || !checkPassword() || !checkConfirmPassword() ){
+      Swal.fire({
+        title: 'Error!',
+        text: 'Please fill in all required fields',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      });
+
+      return;
+    }
+
+    setSignUpButtonState(true);
+    setSignUpText("LOADING...");
+
+    let data = {
+      firstName: document.getElementById('firstName').value,
+      lastName: document.getElementById('lastName').value,
+      email: document.getElementById('email').value,
+      password: document.getElementById('password').value,
+      confirmPassword: document.getElementById('confirmPassword').value
+    }
+    
+    axiosConfig.post('/users/register', data)
+      .then(() => {
+  
+        Swal.fire({
+          title: 'success',
+          text: 'Successfully registered user',
+          icon: 'success',
+          confirmButtonText: 'Ok',
+          timer: 3000
+        }).then(() => {
+          setSignUpButtonState(false);
+          setSignUpText("SIGN UP");
+          authLogin();
+        });
+
+      })
+      .catch((res) => {
+        Swal.fire({
+          title: 'Error!',
+          text: res.data.msg.length > 0 ? res.data.msg : 'Error registering user, please contact admin',
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        });
+        
+        setSignUpButtonState(false);
+        setSignUpText("SIGN UP");
+      });
+  }
+
   return (
     <Grid container component="main" className={classes.root}>
       
@@ -71,7 +259,10 @@ const Register = function({authLogin}) {
                   fullWidth
                   id="firstName"
                   label="First Name"
-                  autoFocus
+                  error={firstNameError}
+                  helperText={firstNameErrorMsg}
+                  onBlur={checkFirstName}
+                  onKeyUp={checkFirstName}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -83,6 +274,10 @@ const Register = function({authLogin}) {
                   label="Last Name"
                   name="lastName"
                   autoComplete="lname"
+                  error={lastNameError}
+                  helperText={lastNameErrorMsg}
+                  onBlur={checkLastName}
+                  onKeyUp={checkLastName}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -94,9 +289,13 @@ const Register = function({authLogin}) {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  error={emailError}
+                  helperText={emailErrorMsg}
+                  onBlur={checkEmail}
+                  onKeyUp={checkEmail}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   variant="outlined"
                   required
@@ -105,7 +304,25 @@ const Register = function({authLogin}) {
                   label="Password"
                   type="password"
                   id="password"
-                  autoComplete="current-password"
+                  error={passowrdError}
+                  helperText={passowrdErrorMsg}
+                  onBlur={checkPassword}
+                  onKeyUp={checkPassword}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  type="password"
+                  id="confirmPassword"
+                  error={confirmPasswordError}
+                  helperText={confirmPasswordErrorMsg}
+                  onBlur={checkConfirmPassword}
+                  onKeyUp={checkConfirmPassword}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -121,8 +338,10 @@ const Register = function({authLogin}) {
               variant="contained"
               color="primary"
               className={classes.submit}
+              onClick={submit}
+              disabled={signUpButtonState}
             >
-              Sign Up
+              {signUpText}
             </Button>
             <Grid container justify="flex-end">
               <Grid item>

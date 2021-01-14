@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -6,26 +6,18 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import { authRegister } from "../../redux/actions/authActions";
-import {connect} from 'react-redux';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import {connect} from 'react-redux';
+import { authRegister, commitToLocalStorage } from "../../redux/actions/authActions";
+import { setToken } from "../../redux/actions/authActions";
+
+import validators from '../../middlewares/validators';
+import Swal from 'sweetalert2';
+import axiosConfig from '../../middlewares/axiosConfig';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,6 +54,99 @@ const useStyles = makeStyles((theme) => ({
 const Login = function(props) {
   const classes = useStyles();
 
+  const [signInText, setSignInText] = useState("SIGN IN");
+  const [signInButtonState, setSignInButtonState] = useState(false);
+  
+  const [emailErrorMsg, setemailErrorMsg] = useState("");
+  const [emailError, setemailError] = useState(false);
+
+  const [passowrdErrorMsg, setpassowrdErrorMsg] = useState("");
+  const [passowrdError, setpassowrdError] = useState(false);
+
+  const checkEmail = (e) => {
+    e ? e.preventDefault() : '';
+
+    let id = 'email';
+
+    let hasContent = validators.isRequired(id);
+    if (hasContent){
+      setemailError(hasContent);
+      setemailErrorMsg('field is required');
+      return false;
+    }
+
+    let isValidEmail = validators.isValidEmail(id);
+    if (isValidEmail){
+      setemailError(isValidEmail);
+      setemailErrorMsg('email does not look right');
+      return false;
+    }
+
+    setemailError(false);
+    setemailErrorMsg('');
+
+    return true;
+  }
+
+  const checkPassword = (e) => {
+    e ? e.preventDefault() : '';
+    
+    let id = 'password';
+
+    let hasContent = validators.isRequired(id);
+    if (hasContent){
+      setpassowrdError(hasContent);
+      setpassowrdErrorMsg('field is required');
+      return false;
+    }
+
+    setpassowrdError(false);
+    setpassowrdErrorMsg('');
+
+    return true;
+  }
+
+  const userSignIn = async (e) => {
+    e.preventDefault();
+
+    if (!checkEmail() || !checkPassword()) {
+      Swal.fire({
+        title: 'Error!',
+        text: 'Please fill in all required fields',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      });
+
+      return;
+    }
+
+    setSignInText("LOADING...");
+    setSignInButtonState(true);
+
+    let data = {
+      email: document.getElementById('email').value,
+      password: document.getElementById('password').value
+    }
+
+    axiosConfig.post("/users/login", data)
+      .then(() => {
+        let token = res.data.data.token;
+        props.setToken(token);
+        props.commitToLocalStorage();
+
+        Swal.fire({
+          title: 'success',
+          text: 'User successfully logged in',
+          icon: 'success',
+          timer: 1500
+        });
+
+        setSignInText("SIGN IN");
+        setSignInButtonState(false);
+
+      });
+  }
+
   return (
     <Grid container component="main" className={classes.root}>
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
@@ -73,7 +158,7 @@ const Login = function(props) {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate>
+          <div className={classes.form} noValidate>
             <TextField
               variant="outlined"
               margin="normal"
@@ -84,6 +169,10 @@ const Login = function(props) {
               name="email"
               autoComplete="email"
               autoFocus
+              error={emailError}
+              helperText={emailErrorMsg}
+              onBlur={checkEmail}
+              onKeyUp={checkEmail}
             />
             <TextField
               variant="outlined"
@@ -95,6 +184,10 @@ const Login = function(props) {
               type="password"
               id="password"
               autoComplete="current-password"
+              error={passowrdError}
+              helperText={passowrdErrorMsg}
+              onBlur={checkPassword}
+              onKeyUp={checkPassword}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -106,9 +199,12 @@ const Login = function(props) {
               variant="contained"
               color="primary"
               className={classes.submit}
+              disabled={signInButtonState}
+              onClick={userSignIn}
             >
-              Sign In
+              {signInText}
             </Button>
+            {props.token}
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2" style={{cursor:'pointer'}}>
@@ -121,18 +217,21 @@ const Login = function(props) {
                 </Link>
               </Grid>
             </Grid>
-            <Box mt={5}>
-              <Copyright />
-            </Box>
-          </form>
+          </div>
         </div>
       </Grid>
     </Grid>
   );
 }
 
+const mapStateToProps = state => ({
+  token: state.authPage.token
+});
+
 const mapDispatchToProps = {
-  authRegister
+  authRegister,
+  setToken,
+  commitToLocalStorage
 }
 
-export default connect(function(){return {}}, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
