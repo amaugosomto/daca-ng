@@ -39,7 +39,7 @@ export default function Layout({ children }) {
 
       <div className={ router.pathname == "/" ? pageLoaded ? styles.show : styles.hide : ''}>
         <Header />
-          {children}
+        {children}
         <Footer />
       </div>
     </div>

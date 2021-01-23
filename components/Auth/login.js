@@ -12,12 +12,14 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
 import {connect} from 'react-redux';
-import { authRegister, commitToLocalStorage } from "../../redux/actions/authActions";
-import { setToken } from "../../redux/actions/authActions";
+import { authRegister, 
+  commitUserToLocalStorage,
+  setUserDetails } from "../../redux/actions/authActions";
 
 import validators from '../../middlewares/validators';
 import Swal from 'sweetalert2';
 import axiosConfig from '../../middlewares/axiosConfig';
+import { useRouter } from 'next/router';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,6 +54,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Login = function(props) {
+  const router = useRouter();
+
   const classes = useStyles();
 
   const [signInText, setSignInText] = useState("SIGN IN");
@@ -129,10 +133,10 @@ const Login = function(props) {
     }
 
     axiosConfig.post("/users/login", data)
-      .then(() => {
-        let token = res.data.data.token;
-        props.setToken(token);
-        props.commitToLocalStorage();
+      .then(res => {
+        let user = res.data.data;
+        props.setUserDetails(user);
+        props.commitUserToLocalStorage();
 
         Swal.fire({
           title: 'success',
@@ -144,6 +148,17 @@ const Login = function(props) {
         setSignInText("SIGN IN");
         setSignInButtonState(false);
 
+        router.push("/Classes");
+      }).catch(res => {
+        Swal.fire({
+          title: 'error',
+          text: res.data.msg,
+          icon: 'error',
+          timer: 1500
+        });
+
+        setSignInText("SIGN IN");
+        setSignInButtonState(false);
       });
   }
 
@@ -204,7 +219,7 @@ const Login = function(props) {
             >
               {signInText}
             </Button>
-            {props.token}
+            
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2" style={{cursor:'pointer'}}>
@@ -230,8 +245,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   authRegister,
-  setToken,
-  commitToLocalStorage
+  setUserDetails,
+  commitUserToLocalStorage
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

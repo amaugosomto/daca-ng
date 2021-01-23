@@ -15,7 +15,7 @@ export default function Home() {
 
   useEffect(() => {
     flipLoader();
-  });
+  }, []);
 
   const flipLoader = () => {
     setFlipImage(flipImage = true);

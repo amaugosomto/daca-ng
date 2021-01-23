@@ -1,28 +1,34 @@
-import { AUTH_LOGIN, AUTH_REGISTER, 
-  SET_TOKEN, COMMIT_LOCAL } from "../actions/types";
+import { USER_CONSTANTS } from "../actions/types";
+  
+import Cookies from 'js-cookie';
 
 const initialState = {
   authPage: 'login',
-  token: ""
+  user: {}
 }
 
-const authReducer = (state = initialState, action) => {
+const authReducer = (state = {...initialState}, action) => {
+
   switch (action.type) {
-    case AUTH_LOGIN:
+    case USER_CONSTANTS.AUTH_LOGIN:
       return {...state, authPage: 'login'};
 
-    case AUTH_REGISTER:
+    case USER_CONSTANTS.AUTH_REGISTER:
       return {...state, authPage: 'signup'};
   
-    case SET_TOKEN: 
-      return {...state, token: action.payload};
+    case USER_CONSTANTS.SET_USER_DETAILS: 
+      return {...state, user: action.payload};
 
-    case COMMIT_LOCAL: 
-      localStorage.setItem('state', JSON.stringify(state));
-      return;
+    case USER_CONSTANTS.COMMIT_USER_LOCAL: 
+      Cookies.set('user', state.user, { expires: 1 });
+      return state;
+
+    case USER_CONSTANTS.USER_LOGOUT: 
+      typeof window !== "undefined" ? Cookies.remove('user') : '';
+      return {...state, ...initialState};
 
     default:
-      return {...initialState};
+      return state;
   }
 }
 

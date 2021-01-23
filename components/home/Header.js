@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import cx from 'clsx';
@@ -11,17 +11,11 @@ import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import {Button} from '@material-ui/core';
-import { useRouter as router } from 'next/router';
+import { useRouter } from 'next/router';
 
-const isActive = (href) => {
-  return router().pathname === href;
-}
+import {connect} from 'react-redux';
+import {userLogout} from '../../redux/actions/authActions';
 
-const isClassRoom = () => {
-  let pathName = router().pathname.toLowerCase();
-
-  return pathName.includes('/classes') || pathName.includes('/auth');
-}
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -108,7 +102,19 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function PrimarySearchAppBar() {
+const PrimarySearchAppBar = function (props) {
+  const router = useRouter();
+
+  const isActive = (href) => {
+    return router.pathname === href;
+  }
+
+  const isClassRoom = () => {
+    let pathName = router.pathname.toLowerCase();
+  
+    return pathName.includes('/classes') || pathName.includes('/auth');
+  }
+  
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -209,11 +215,23 @@ export default function PrimarySearchAppBar() {
         </Link>
       </MenuItem>
       <MenuItem>
-        <Link href="/auth" 
-          className={cx(classes.button, isActive('/auth') ? classes.active : '',
-           !isClassRoom() ? classes.hide : '')}>
-          <a>Login</a>
-        </Link>
+      
+        {Object.keys(props.user).length < 1 ? 
+
+          <Link href="/auth" 
+            className={cx(classes.button, isActive('/auth') ? classes.active : '',
+            !isClassRoom() ? classes.hide : '')}>
+            <a>Login</a>
+          </Link> : 
+
+          <Link href="/auth" 
+            className={cx(classes.button, isActive('/auth') ? classes.active : '',
+            !isClassRoom() ? classes.hide : '')}>
+            <a onClick={() => props.userLogout()}>Logout</a>
+          </Link> 
+        }
+
+        
       </MenuItem>
       <MenuItem>
         <Link href="/">
@@ -278,12 +296,26 @@ export default function PrimarySearchAppBar() {
                 <a>Classes</a>
               </Link>
             </Button>
-            <Button size="small" className={cx(classes.button, isActive('/auth') ? classes.active : '',
-              !isClassRoom() ? classes.hide : '')}>
-              <Link href="/auth">
-                <a>Login</a>
-              </Link>
-            </Button>
+            
+            {Object.keys(props.user).length < 1 ? 
+
+              <Button size="small" className={cx(classes.button, isActive('/auth') ? classes.active : '',
+                !isClassRoom() ? classes.hide : '')}>
+                <Link href="/auth">
+                  <a>Login</a>
+                </Link>
+              </Button> : 
+
+              <Button size="small" className={cx(classes.button, isActive('/auth') ? classes.active : '',
+                !isClassRoom() ? classes.hide : '')}>
+                <Link href="">
+                  <div>
+                    <a onClick={() => props.userLogout()}>Logout</a>
+                  </div>
+                </Link>
+              </Button>
+            }
+            
             <IconButton aria-label="show 4 new mails" color="inherit">
               <SearchIcon />
             </IconButton>
@@ -309,3 +341,13 @@ export default function PrimarySearchAppBar() {
     </div>
   );
 }
+
+const mapStateToProps = state => ({
+  user: state.authPage.user
+});
+
+const mapDispatchToProps = {
+  userLogout
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PrimarySearchAppBar);

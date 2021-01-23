@@ -1,21 +1,40 @@
-import { AUTH_LOGIN, AUTH_REGISTER, 
-  SET_TOKEN, COMMIT_LOCAL } from "./types";
+import { USER_CONSTANTS } from "./types";
+import Cookies from 'js-cookie';
 
 export const authLogin = () => ({
-  type: AUTH_LOGIN
+  type: USER_CONSTANTS.AUTH_LOGIN
 });
 
 export const authRegister = () => ({
-  type: AUTH_REGISTER
+  type: USER_CONSTANTS.AUTH_REGISTER
 });
 
-export const setToken = token => dispatch => {
+export const setUserDetails = user => dispatch => {
   dispatch({
-    type: SET_TOKEN,
-    payload: token
+    type: USER_CONSTANTS.SET_USER_DETAILS,
+    payload: user
   });
 }
 
-export const commitToLocalStorage = () => ({
-  type: COMMIT_LOCAL
+export const reintialiseState = () => (dispatch, getState) => {
+  let user = Cookies.getJSON('user');
+
+  if (typeof user != "undefined"){
+    let userState = getState().authPage.user;
+
+    if (Object.keys(userState).length < 1)
+      dispatch(setUserDetails(user));
+  }
+}
+
+export const isUserLoggedIn = () => (dispatch, getState) => {
+  return Object.keys(getState().authPage.user).length > 0;
+}
+
+export const commitUserToLocalStorage = () => ({
+  type: USER_CONSTANTS.COMMIT_USER_LOCAL
+});
+
+export const userLogout = () => ({
+  type: USER_CONSTANTS.USER_LOGOUT
 });

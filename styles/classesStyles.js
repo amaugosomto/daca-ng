@@ -1,6 +1,4 @@
 import { makeStyles } from '@material-ui/core/styles';
-import Color from 'color';
-import { red } from '@material-ui/core/colors';
 
 const $primaryColor = '#6D0EB5';
 const $lightGrey = '#636363';
@@ -58,7 +56,8 @@ export const useStyles = makeStyles((theme) => ({
     }
   },
   classes: {
-    margin: '1.7rem 0',
+    marginTop: '4rem',
+    marginBottom: '4rem',
     [theme.breakpoints.down('sm')]: {
       '& h4': {
         fontSize: '1rem'
@@ -91,6 +90,9 @@ export const useStyles = makeStyles((theme) => ({
       padding: '0 .6rem',
       marginBottom: '1.5rem'
     }
+  },
+  username: {
+    textTransform: 'capitalize'
   }
 }));
 
