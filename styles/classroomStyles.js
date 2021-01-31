@@ -44,7 +44,7 @@ export const useStyles = makeStyles((theme) => ({
     marginTop: '3rem',
     fontFamily: "'Open Sans', sans-serif",
 
-    '& > span':{
+    '& > p':{
       fontSize: '1.3rem',
       lineHeight: 2,
       textAlign: 'justify'

@@ -48,6 +48,10 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: '1.5rem',
       backgroundColor: 'rgba(0,0,0,0.08)',
     },
+    [theme.breakpoints.down('xs')]: {
+      margin: '0',
+      marginBottom: '1.5rem'
+    },
   },
   main: {
     overflow: 'hidden',

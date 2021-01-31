@@ -15,6 +15,7 @@ export const classroom = (props) => {
 
   useEffect(() => {
     checkUser();
+    window.scrollTo(0, 0);
   }, []);
 
   const checkUser = async () => {
@@ -94,9 +95,9 @@ export const classroom = (props) => {
           </div>
 
           <Container maxWidth="md" className={styles.classBody}>
-            <span>
+            <p>
               Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minima, illo laboriosam eligendi, vero quos necessitatibus dolore a natus atque quis mollitia quia? Placeat necessitatibus delectus hic nihil voluptatibus repellendus explicabo distinctio beatae eaque ab omnis repellat numquam adipisci dicta aliquid dolorum, maxime corrupti deleniti natus voluptate commodi laborum quam facilis nesciunt. Nobis quibusdam, laboriosam itaque doloribus repellendus aperiam nulla tenetur deleniti accusamus obcaecati, sunt eaque id magnam, sequi quod odio ut laudantium adipisci culpa perspiciatis quas esse porro! Officiis eos, recusandae tempora praesentium eius ducimus ullam cupiditate dolores repudiandae at animi assumenda eum velit iste sapiente optio iusto dicta maxime facilis sit aliquid. Atque, aspernatur. Veniam sequi quisquam dolorum accusamus. Et iure earum maxime aut repellat vitae dolorum quisquam saepe cupiditate, iusto natus, ullam incidunt odit nostrum alias quas porro autem sequi praesentium doloremque rem deserunt dolore debitis? Debitis, unde? Explicabo perspiciatis, ipsa ipsum praesentium fugit corporis error eum necessitatibus, voluptas commodi dolore in ad cupiditate facilis! Suscipit voluptate magnam expedita quo omnis architecto. Totam possimus, incidunt amet repellat cupiditate molestiae voluptatum quaerat quas cumque laudantium eaque laboriosam voluptas libero voluptatem minus ab exercitationem. Maxime iste minus fuga aliquid ut. Ut provident magni perspiciatis maiores minima alias, praesentium distinctio accusantium non id tempora rem porro tempore sunt sequi reprehenderit incidunt explicabo? Similique voluptates ipsa impedit quia facere doloribus reprehenderit numquam, accusantium culpa magnam nam earum harum ea in quaerat. Exercitationem vero architecto quam et perferendis id harum minima delectus rerum dolore similique illum eos nesciunt deserunt eum ipsum aperiam labore adipisci, eaque doloribus perspiciatis consequuntur quia? Facilis voluptas, possimus rerum ipsum laudantium veniam optio ipsa impedit debitis repudiandae quas perspiciatis aliquid! Consequatur voluptate sapiente earum voluptates dolores deserunt alias a, vel sed ex voluptatem! Temporibus natus minima magnam quidem unde, perspiciatis odio sapiente provident incidunt ab a placeat necessitatibus suscipit!
-            </span>
+            </p>
             
             <div>
               <Button variant="contained">Previous class</Button>

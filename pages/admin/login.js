@@ -1,21 +1,17 @@
 import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
+import HomeLayout from '../../components/home/HomeLayout';
 import { makeStyles } from '@material-ui/core/styles';
 
 import {connect} from 'react-redux';
-import { authRegister, 
-  commitUserToLocalStorage,
-  setUserDetails } from "../../redux/actions/authActions";
-
 import validators from '../../middlewares/validators';
 import Swal from 'sweetalert2';
 import axiosConfig from '../../middlewares/axiosConfig';
@@ -27,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '4rem'
   },
   image: {
-    backgroundImage: 'url(/images/auth.jpg)',
+    backgroundImage: 'url(/images/adminUser.jpg)',
     backgroundRepeat: 'no-repeat',
     backgroundColor:
       theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
@@ -51,11 +47,14 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  grid: {
+    display: 'flex',
+    alignItems: 'center'
+  }
 }));
 
-const Login = function(props) {
+const SignInSide = function (props) {
   const router = useRouter();
-
   const classes = useStyles();
 
   const [signInText, setSignInText] = useState("SIGN IN");
@@ -110,7 +109,7 @@ const Login = function(props) {
     return true;
   }
 
-  const userSignIn = async (e) => {
+  const adminSignIn = async (e) => {
     e.preventDefault();
 
     if (!checkEmail() || !checkPassword()) {
@@ -152,7 +151,7 @@ const Login = function(props) {
       }).catch(res => {
         Swal.fire({
           title: 'error',
-          text: res ? res.data.msg : 'An error occured',
+          text: res.data.msg,
           icon: 'error',
           timer: 1500
         });
@@ -163,90 +162,81 @@ const Login = function(props) {
   }
 
   return (
-    <Grid container component="main" className={classes.root}>
-      <Grid item xs={false} sm={4} md={7} className={classes.image} />
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-          <div className={classes.form} noValidate>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              error={emailError}
-              helperText={emailErrorMsg}
-              onBlur={checkEmail}
-              onKeyUp={checkEmail}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              error={passowrdError}
-              helperText={passowrdErrorMsg}
-              onBlur={checkPassword}
-              onKeyUp={checkPassword}
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              disabled={signInButtonState}
-              onClick={userSignIn}
-            >
-              {signInText}
-            </Button>
-            
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2" style={{cursor:'pointer'}}>
-                  Forgot password?
-                </Link>
+    <HomeLayout>
+      <Grid container component="main" className={classes.root}>
+        <CssBaseline />
+        <Grid item xs={false} sm={4} md={7} className={classes.image} />
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square className={classes.grid} >
+          <div className={classes.paper}>
+            <Avatar className={classes.avatar}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Admin Sign in
+            </Typography>
+            <form className={classes.form} noValidate>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                error={emailError}
+                helperText={emailErrorMsg}
+                onBlur={checkEmail}
+                onKeyUp={checkEmail}
+              />
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                error={passowrdError}
+                helperText={passowrdErrorMsg}
+                onBlur={checkPassword}
+                onKeyUp={checkPassword}
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                disabled={signInButtonState}
+                onClick={adminSignIn}
+              >
+                {signInText}
+              </Button>
+              <Grid container>
+                <Grid item xs>
+                  <Link href="" variant="body2">
+                    Forgot password?
+                  </Link>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Link onClick={props.authRegister} variant="body2" style={{cursor:'pointer'}}>
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
+            </form>
           </div>
-        </div>
+        </Grid>
       </Grid>
-    </Grid>
+    </HomeLayout>
   );
 }
 
 const mapStateToProps = state => ({
-  token: state.authPage.token
+  state
 });
 
 const mapDispatchToProps = {
-  authRegister,
-  setUserDetails,
-  commitUserToLocalStorage
+  
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(SignInSide);

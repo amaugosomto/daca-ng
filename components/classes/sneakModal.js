@@ -20,7 +20,7 @@ import BasicClasses from './basicClasses';
 import { useRouter } from 'next/router';
 
 
-const useStyles = makeStyles(({ spacing, palette }) => {
+const useStyles = makeStyles(({ spacing, palette, breakpoints }) => {
   const family =
     '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"';
   return {
@@ -135,7 +135,7 @@ const useStyles = makeStyles(({ spacing, palette }) => {
       '& *': {
         color: '#fff',
         fontSize: '.9rem',
-        marginLeft: '.4ren'
+        marginLeft: '.4rem'
       },
 
       '&:hover': {
@@ -143,6 +143,12 @@ const useStyles = makeStyles(({ spacing, palette }) => {
         color: '#fff',
       }
       
+    },
+    modalContainer: {
+      [breakpoints.down('sm')]: {
+        paddingLeft: 0,
+        paddingRight: 0
+      }
     }
   }
 });
@@ -253,7 +259,7 @@ export default function sneakModal(props) {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <Container style={{marginTop: '1rem'}}>
+          <Container style={{marginTop: '1rem'}} className={styles.modalContainer}>
             <Grid container>
               <Grid item xs={12} sm={5}>
                 <div>
@@ -293,7 +299,7 @@ export default function sneakModal(props) {
               </Grid>
 
               <Grid item xs={12} sm={7}>
-                <Container>
+                <Container className={styles.modalContainer}>
                   <Typography variant="h5" className={styles.contentHead}>
                     Classes
                   </Typography>
