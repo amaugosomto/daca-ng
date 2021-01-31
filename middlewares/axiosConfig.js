@@ -9,6 +9,7 @@ const token = typeof window == 'undefined' ? null : localStorage.getItem('token'
 axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token == null ? '' : token}`;
 axiosInstance.defaults.headers.common['Access-Control-Allow-Origin'] = `*`;
 axiosInstance.defaults.headers.common['Access-Control-Allow-Methods'] = `GET, POST, OPTIONS`;
+axiosInstance.defaults.headers.common['Cache-Control'] = `no-store`;
 
 axiosInstance.interceptors.request.use(request => {
   // Edit request config
