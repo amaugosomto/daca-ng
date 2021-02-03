@@ -17,6 +17,8 @@ import Swal from 'sweetalert2';
 import axiosConfig from '../../middlewares/axiosConfig';
 import { useRouter } from 'next/router';
 
+import {setAdminUserDetails, commitAdminUserToLocalStorage} from '../../redux/actions/adminActions';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     height: 'calc(100vh - 4rem)',
@@ -131,11 +133,11 @@ const SignInSide = function (props) {
       password: document.getElementById('password').value
     }
 
-    axiosConfig.post("/users/login", data)
+    axiosConfig.post("/adminuser/login", data)
       .then(res => {
         let user = res.data.data;
-        props.setUserDetails(user);
-        props.commitUserToLocalStorage();
+        props.setAdminUserDetails(user);
+        props.commitAdminUserToLocalStorage();
 
         Swal.fire({
           title: 'success',
@@ -147,11 +149,11 @@ const SignInSide = function (props) {
         setSignInText("SIGN IN");
         setSignInButtonState(false);
 
-        router.push("/Classes");
+        router.push("/admin");
       }).catch(res => {
         Swal.fire({
           title: 'error',
-          text: res.data.msg,
+          text: res ? res.data.msg : "an error occured",
           icon: 'error',
           timer: 1500
         });
@@ -232,11 +234,12 @@ const SignInSide = function (props) {
 }
 
 const mapStateToProps = state => ({
-  state
+  
 });
 
 const mapDispatchToProps = {
-  
+  setAdminUserDetails,
+  commitAdminUserToLocalStorage
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignInSide);

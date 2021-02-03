@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import Head from 'next/head';
 import NoSsr from '@material-ui/core/NoSsr';
 import GoogleFontLoader from 'react-google-font-loader';
@@ -14,7 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Row, Item } from '@mui-treasury/components/flex';
 import { Info, InfoSubtitle, InfoTitle } from '@mui-treasury/components/info';
 import { useNewsInfoStyles } from '@mui-treasury/styles/info/news';
-import Modal from '../../components/classes/sneakModal';
+import ClassDialog from '../../components/classes/sneakModal';
 
 import {connect} from 'react-redux';
 import {reintialiseState} from '../../redux/actions/authActions';
@@ -145,10 +145,10 @@ function Classes(props){
 
   const mediaStyles = useWideCardMediaStyles();
   const [open, setOpen] = React.useState(false);
-  const [title, setTitle] = React.useState("");
+  const [classType, setClassType] = useState(0);
 
-  const handleOpen = (state) => {
-    state == "basic" ? setTitle("Basic Classes") : setTitle("Advanced Classes");
+  const handleOpen = async (classTypeId) => {
+    await setClassType(classTypeId);
     setOpen(true);
   };
 
@@ -185,7 +185,7 @@ function Classes(props){
               <Typography variant="caption" className="spanCaption">
                 Introduction Classes meant to prepare you for being a better Christain.
               </Typography>
-              <Button variant="contained" onClick={() => handleOpen("basic")}>
+              <Button variant="contained" onClick={() => handleOpen(1)}>
                 Start learning
               </Button>
             </div>
@@ -212,7 +212,7 @@ function Classes(props){
                       <Typography variant={'h2'} className={cardStyles.title}>
                         Beginner Classes are meant to prepare you for a life with Christ
                       </Typography>
-                      <Button variant="contained" className={cardStyles.Button} onClick={() => handleOpen("basic")}>
+                      <Button variant="contained" className={cardStyles.Button} onClick={() => handleOpen(1)}>
                         start learning
                       </Button>
                     </div>
@@ -260,7 +260,7 @@ function Classes(props){
                       <Typography variant={'h2'} className={cardStyles.title}>
                         Advanced classes meant to deepen your understanding of the kingdom
                       </Typography>
-                      <Button variant="contained" className={cardStyles.Button} onClick={() => handleOpen("advanced")}>
+                      <Button variant="contained" className={cardStyles.Button} onClick={() => handleOpen(2)}>
                         start learning
                       </Button>
                     </div>
@@ -291,7 +291,7 @@ function Classes(props){
               </>
             </Grid>
           </Grid>
-          <Modal open={open} handleClose={handleClose} title={title} />
+          <ClassDialog open={open} handleClose={handleClose} classType={classType} />
         </Container>
       </main>
     </div>

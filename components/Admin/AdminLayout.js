@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import { connect } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -23,6 +24,8 @@ import PeopleIcon from '@material-ui/icons/People';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import { Container } from '@material-ui/core';
 import { useRouter } from 'next/router';
+
+import {reintialiseAdminState, isAdminUserLoggedIn} from '../../redux/actions/adminActions';
 
 const $primaryColor = '#6D0EB5';
 
@@ -121,7 +124,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Dashboard({ children }) {
+function Dashboard({ children, ...pageProps }) {
   const classes = useStyles();
   const router = useRouter();
 
@@ -133,6 +136,18 @@ export default function Dashboard({ children }) {
     setOpen(false);
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  const checkUser = async () => {
+    await pageProps.reintialiseAdminState();
+    let isAdminUserLoggedIn = pageProps.isAdminUserLoggedIn();
+
+    if (!isAdminUserLoggedIn)
+      return router.push(`/`);
+  }
 
   return (
     <div className={classes.root}>
@@ -207,3 +222,14 @@ export default function Dashboard({ children }) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => ({
+  adminUser: state.adminReducer.user
+});
+
+const mapDispatchToProps = {
+  reintialiseAdminState,
+  isAdminUserLoggedIn
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

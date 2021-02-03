@@ -15,8 +15,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 
-import AdvancedClasses from './advancedClasses';
-import BasicClasses from './basicClasses';
+import Classes from './classes';
 import { useRouter } from 'next/router';
 
 
@@ -235,7 +234,7 @@ export default function sneakModal(props) {
   const openClassRoom = (classId) => {
     handleClose();
     router.push({
-      pathname: '/Classes/classroom',
+      pathname: '/classes/classroom',
       query: { classId }
     });
   }
@@ -253,7 +252,9 @@ export default function sneakModal(props) {
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle className={styles.dialogHeader}>
-          <span className={styles.dialogHeaderText}>{props.title}</span>
+          <span className={styles.dialogHeaderText}>
+            {props.classType == 1 ? "Basic Classes" : "Advanced Classes"}
+          </span>
           <IconButton aria-label="close" onClick={handleClose}>
             <CloseIcon />
           </IconButton>
@@ -305,7 +306,7 @@ export default function sneakModal(props) {
                   </Typography>
                   <Divider />
                   
-                  { props.title == "Advanced Classes" ? <AdvancedClasses openClassRoom={openClassRoom} /> : <BasicClasses openClassRoom={openClassRoom} />}
+                  <Classes classType={props.classType} handleClose={handleClose} openClassRoom={openClassRoom} />
                 </Container>
                 
               </Grid>

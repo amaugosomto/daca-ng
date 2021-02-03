@@ -226,6 +226,7 @@ function addQuiz(props) {
     props.api.post('/classes/addQuiz', data)
       .then(res => {
         props.handleClose();
+        props.checkUser();
 
         Swal.fire({
           title: 'success',
@@ -272,6 +273,7 @@ function addQuiz(props) {
     props.api.post('/classes/editQuiz', data)
       .then(res => {
         props.handleClose();
+        props.checkUser();
 
         Swal.fire({
           title: 'success',
@@ -309,7 +311,6 @@ function addQuiz(props) {
     setLoading(false);
     document.getElementById('quiz_question').value = "";
   }
-
 
   return (
     <>

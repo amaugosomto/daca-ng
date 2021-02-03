@@ -1,17 +1,22 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { connect } from 'react-redux';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import HomeLayout from '../../components/home/HomeLayout';
 import Skeleton from 'react-loading-skeleton';
+import Swal from 'sweetalert2';
 
 import componentStyles from '../../styles/classroomStyles';
 import { reintialiseState, isUserLoggedIn } from '../../redux/actions/authActions';
 import { Avatar, Button, Container, Typography } from '@material-ui/core';
+import api from '../../middlewares/axiosConfig';
 
 export const classroom = (props) => {
   const styles = componentStyles();
   const router = useRouter();
+
+  const [Class, setClass] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     checkUser();
@@ -24,14 +29,12 @@ export const classroom = (props) => {
     let classId = getClassIdFromRoute();
 
     if (classId == false)
-      router.push('/Classes');
+      return router.push('/Classes');
 
     if (!isUserLoggedIn) 
-      router.push({
-        pathname: '/auth',
-        query: { notLI: true, redirect: `/classroom?classId=${classId}` }
-      });
+      return router.push(`/auth?redirect=classes/classroom?classId=${classId}`);
 
+    getClassByClassId(classId);
   }
 
   const getClassIdFromRoute = () => {
@@ -45,11 +48,33 @@ export const classroom = (props) => {
     return false;
   }
 
+  const getClassByClassId = async (classId) => {
+    let classResponse = await api.get('/classes/getclass/' + classId)
+      .then(res => res)
+      .catch(err => {
+        Swal.fire({
+          title: 'error',
+          text: err ? err.data.msg : 'An error occured',
+          icon: 'error',
+          timer: 2000
+        });
+
+        router.push('/classes');
+      });
+
+    let Class = classResponse.data.data;
+    setClass(Class);
+    setLoading(false);
+  }
+
   const openQuizArea = (quizId) => {
     router.push({
       pathname: '/Classes/quiz',
       query: { quizId }
     });
+  }
+  function createMarkup(html) {
+    return {__html: html};
   }
 
   return (
@@ -73,19 +98,19 @@ export const classroom = (props) => {
           <div>
             <Container className={styles.headerContainer}>
               <Typography variant="h5">
-                Introduction to Christianity Part 1
+                { loading ? <Skeleton /> : Class.classTitle}
               </Typography>
               <div>
                 <div className={styles.headerBody}>
-                  <Avatar alt="pastors image" src="https://i.pravatar.cc/300?img=14" className={styles.large} />
+                  <Avatar alt="pastors image" src={loading ? "/images/loading.jpg" : "https://i.pravatar.cc/300?img=14"} className={styles.large} />
                   <div>
                     <div>
                       <span>
-                        Pst. Chigozie Onuoha
+                        { loading ? <Skeleton /> : Class.tutor}
                       </span>
                     </div>
                     <span>
-                      Jan 30, 2020 · 11 min read
+                      { loading ? <Skeleton /> : 'Jan 30, 2020 · 11 min read'}
                     </span>
                   </div>
                 </div>
@@ -95,14 +120,15 @@ export const classroom = (props) => {
           </div>
 
           <Container maxWidth="md" className={styles.classBody}>
-            <p>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minima, illo laboriosam eligendi, vero quos necessitatibus dolore a natus atque quis mollitia quia? Placeat necessitatibus delectus hic nihil voluptatibus repellendus explicabo distinctio beatae eaque ab omnis repellat numquam adipisci dicta aliquid dolorum, maxime corrupti deleniti natus voluptate commodi laborum quam facilis nesciunt. Nobis quibusdam, laboriosam itaque doloribus repellendus aperiam nulla tenetur deleniti accusamus obcaecati, sunt eaque id magnam, sequi quod odio ut laudantium adipisci culpa perspiciatis quas esse porro! Officiis eos, recusandae tempora praesentium eius ducimus ullam cupiditate dolores repudiandae at animi assumenda eum velit iste sapiente optio iusto dicta maxime facilis sit aliquid. Atque, aspernatur. Veniam sequi quisquam dolorum accusamus. Et iure earum maxime aut repellat vitae dolorum quisquam saepe cupiditate, iusto natus, ullam incidunt odit nostrum alias quas porro autem sequi praesentium doloremque rem deserunt dolore debitis? Debitis, unde? Explicabo perspiciatis, ipsa ipsum praesentium fugit corporis error eum necessitatibus, voluptas commodi dolore in ad cupiditate facilis! Suscipit voluptate magnam expedita quo omnis architecto. Totam possimus, incidunt amet repellat cupiditate molestiae voluptatum quaerat quas cumque laudantium eaque laboriosam voluptas libero voluptatem minus ab exercitationem. Maxime iste minus fuga aliquid ut. Ut provident magni perspiciatis maiores minima alias, praesentium distinctio accusantium non id tempora rem porro tempore sunt sequi reprehenderit incidunt explicabo? Similique voluptates ipsa impedit quia facere doloribus reprehenderit numquam, accusantium culpa magnam nam earum harum ea in quaerat. Exercitationem vero architecto quam et perferendis id harum minima delectus rerum dolore similique illum eos nesciunt deserunt eum ipsum aperiam labore adipisci, eaque doloribus perspiciatis consequuntur quia? Facilis voluptas, possimus rerum ipsum laudantium veniam optio ipsa impedit debitis repudiandae quas perspiciatis aliquid! Consequatur voluptate sapiente earum voluptates dolores deserunt alias a, vel sed ex voluptatem! Temporibus natus minima magnam quidem unde, perspiciatis odio sapiente provident incidunt ab a placeat necessitatibus suscipit!
-            </p>
+            { loading ? <Skeleton height={80} count={3} /> : <div dangerouslySetInnerHTML={createMarkup(Class.classBody)} />}
             
-            <div>
-              <Button variant="contained">Previous class</Button>
-              <Button variant="contained" onClick={() => openQuizArea(1)} >Take Quiz</Button>
-            </div>
+            {loading ? '' : 
+              <div>
+                <Button variant="contained">Previous class</Button>
+                <Button variant="contained" onClick={() => openQuizArea(Class.id)} >Take Quiz</Button>
+              </div>
+            }
+            
           </Container>
 
 

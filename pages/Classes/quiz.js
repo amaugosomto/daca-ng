@@ -14,11 +14,21 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import Swal from 'sweetalert2';
-import Checkbox from '@material-ui/core/Checkbox';
+import Skeleton from 'react-loading-skeleton';
+
+import api from '../../middlewares/axiosConfig';
 
 export const exam = (props) => {
   const styles = componentStyles();
   const router = useRouter();
+
+  const [quiz, setQuiz] = useState({Quizzes: []});
+  const [quizIds, setQuizIds] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    checkUser();
+  }, [props.user]);
 
   const checkUser = async () => {
     await props.reintialiseState();
@@ -26,13 +36,33 @@ export const exam = (props) => {
     let quizId = getExamIdFromRoute();
 
     if (quizId == false || !isUserLoggedIn)
-      router.push('/Classes');
+      return router.push('/Classes');
 
+    getQuiz(quizId);
+    window.scrollTo(0, 0);
   }
 
-  useEffect(() => {
-    checkUser();
-  }, [checkUser, props.user]);
+  const getQuiz = async (quizId) => {
+    let quizResponse = await api.get('/classes/getAllQuizByClassId/' + quizId)
+      .then(res => res)
+      .catch(err => {
+        Swal.fire({
+          title: 'Error!',
+          text: err ? err.data.msg : 'An error occured',
+          icon: 'error',
+          timer: 1500
+        });
+
+        return router.push('/Classes');
+      });
+
+    let quizData = quizResponse.data.data;
+    let quizIds = quizData.Quizzes.map(quiz => `quiz${quiz.id}`);
+
+    setQuiz(quizData);
+    setQuizIds(quizIds);
+    setLoading(false);
+  }
 
   const getExamIdFromRoute = () => {
     let searchParams = new URLSearchParams(window.location.search);
@@ -45,9 +75,10 @@ export const exam = (props) => {
     return false;
   }
 
-  const quizIds = props.quizzes.map(quiz => `quiz${quiz.quizId}`);
+  //const quizIds = props.quizzes.map(quiz => `quiz${quiz.quizId}`);
 
   const checkQuiz = () => {
+    
     let allFieldsFilled = validateAllFields();
 
     if (!allFieldsFilled)
@@ -81,24 +112,6 @@ export const exam = (props) => {
     validateField(id);
   };
 
-  const validateAllFields = () => {
-    let state = false; 
-
-    for (let i = 0; i < quizIds.length; i++) {
-      let quizId = quizIds[i];
-      let isAnyFieldFalse = false;
-
-      let fieldToValidate = validateField(quizId);
-      if (fieldToValidate == false){
-        isAnyFieldFalse = true;
-      }
-        
-      isAnyFieldFalse ? state = false : state = true;
-    }
-
-    return state;
-  }
-
   const validateField = (id) => {
     let elementInputs = document.querySelectorAll(`#${id} input`);
     let elementsToColor = document.querySelectorAll(`#${id} .MuiFormLabel-root, #${id} .MuiFormHelperText-root`);
@@ -118,15 +131,33 @@ export const exam = (props) => {
     }
   }
 
+  const validateAllFields = () => {
+    let state = false;
+
+    for (let i = 0; i < quizIds.length; i++) {
+      let quizId = quizIds[i];
+      let isAnyFieldFalse = false;
+
+      let fieldToValidate = validateField(quizId);
+      if (fieldToValidate == false){
+        isAnyFieldFalse = true;
+      }
+        
+      isAnyFieldFalse ? state = false : state = true;
+    }
+
+    return state;
+  }
+
   const markQuiz = () => {
     for (let i = 0; i < quizIds.length; i++) {
       const quizId = quizIds[i];
       
-      let quizCorrectAnswer = props.quizzes.find(quiz => {
+      let quizCorrectAnswer = quiz.Quizzes.find(quiz => {
                                 let realQuizId = quizId.replace("quiz", '');
 
-                                return quiz.quizId == realQuizId;
-                              }).correctAnswer;
+                                return quiz.id == realQuizId;
+                              }).quizCorrectAns;
       
       let quizInputElements = document.querySelectorAll(`#${quizId} input`);
       let userPickedInputLabelElement = '';
@@ -166,7 +197,7 @@ export const exam = (props) => {
         <main className={styles.main}>
           <Container className={styles.headerContainer}>
             <Typography variant="h5">
-              Introduction to Christianity Part 1 Quiz
+              {loading ? <Skeleton /> : `${quiz.classTitle} Quiz`}
             </Typography>
           </Container>
 
@@ -174,29 +205,39 @@ export const exam = (props) => {
             <Card raised={true} className={styles.card} elevation={3}>
               <CardContent className={styles.cardContent}>
 
-                {props.quizzes.map((value, index) => {
-                  let count = index + 1;
-                  return <div className={styles.quiz} id={`quiz${value.quizId}`} key={index}>
-                          <FormControl component="fieldset">
-                            <FormLabel component="legend" className={styles.legend}>
-                              {`${count}. ${value.question}`}
-                            </FormLabel>
-                            <RadioGroup aria-label="answers" onChange={() => changed(event, `quiz${value.quizId}`)} name={`answers${count}`} className={styles.radioGroup}>
-                              {Object.keys(value.answers).map((key, i) => {
-                                return <FormControlLabel value={key} key={i} control={<Radio />} label={value.answers[key]} />
-                              })}
-                            </RadioGroup>
-                            <FormHelperText className={styles.helperText}></FormHelperText>
-                          </FormControl>
-                        </div>
-                })}
-
+                {loading ? <Skeleton count={5} height={70} /> :
+                  quiz.Quizzes.length > 0 ?
+                    quiz.Quizzes.map((value, index) => {
+                      let count = index + 1;
+                      return <div className={styles.quiz} id={`quiz${value.id}`} key={index}>
+                              <FormControl component="fieldset">
+                                <FormLabel component="legend" className={styles.legend}>
+                                  {`${count}. ${value.quizBody}`}
+                                </FormLabel>
+                                <RadioGroup aria-label="answers" onChange={() => changed(event, `quiz${value.id}`)} name={`answers${count}`} className={styles.radioGroup}>
+                                  {value.QuizAnswers.map((answer, i) => {
+                                    return <FormControlLabel value={answer.answerValue} key={i} control={<Radio />} label={answer.answerBody} />
+                                  })}
+                                </RadioGroup>
+                              <FormHelperText className={styles.helperText}></FormHelperText>
+                            </FormControl>
+                          </div>
+                      })
+                  :
+                  <Typography component="h5" variant="h5">
+                    No quizzes yet
+                  </Typography>
+                }
               </CardContent>
 
-              <CardActions className={styles.cardActions}>
-                <Button variant="contained">Back to class</Button>
-                <Button variant="contained" onClick={() => checkQuiz()} >Submit</Button>
-              </CardActions>
+              {loading ? '' 
+              :
+                <CardActions className={styles.cardActions}>
+                  <Button variant="contained">Back to class</Button>
+                  <Button variant="contained" onClick={() => checkQuiz()} >Submit</Button>
+                </CardActions>
+              }
+              
             </Card>
           </Container>
         </main>

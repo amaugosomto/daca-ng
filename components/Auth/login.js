@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -110,6 +110,16 @@ const Login = function(props) {
     return true;
   }
 
+  const getRedirectFromRoute = () => {
+    let searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.has("redirect")) {
+      let search = location.search;
+      let redirect = search.replace("?redirect=", '');
+      
+      return redirect
+    }
+    return false;
+  }
   const userSignIn = async (e) => {
     e.preventDefault();
 
@@ -148,6 +158,10 @@ const Login = function(props) {
         setSignInText("SIGN IN");
         setSignInButtonState(false);
 
+        let redirect = getRedirectFromRoute();
+        if (redirect){
+          return router.push(redirect);
+        }
         router.push("/Classes");
       }).catch(res => {
         Swal.fire({

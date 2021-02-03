@@ -53,7 +53,8 @@ export const classes = (props) => {
       let tableData = [];
 
       classes.map((val) => {
-        let cell = ['',val.classTitle, val.tutor, `${val.isApproved}`, val.id];
+        let cell = ['',val.classTitle, val.tutor, `
+          ${val.isApproved}`,`${val.ClassTypeId}`, val.id];
         tableData.push(cell);
       });
       
@@ -74,6 +75,14 @@ export const classes = (props) => {
       }
     }, 
     "Class Title", "Tutor",  "isApproved",
+    {
+      name: "Class Type",
+      options: {
+        customBodyRender: (value) => {
+          return (<span>{value == 1 ? "Basic" : "Advanced"}</span>)
+        }
+      }
+    },
     {
       name: "Action",
       options: {

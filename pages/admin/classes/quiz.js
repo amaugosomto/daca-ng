@@ -149,7 +149,7 @@ function quiz() {
         />
 
       <QuizDialog open={open} handleClose={handleClose} title={quizOptionTitle} 
-        api={api} quizId={quizId} classId={classId}/>
+        api={api} quizId={quizId} classId={classId} checkUser={checkUser} />
     </AdminLayout>
   )
 }

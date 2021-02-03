@@ -42,12 +42,14 @@ export const useStyles = makeStyles((theme) => ({
   },
   classBody: {
     marginTop: '3rem',
+    marginBottom: '3rem',
     fontFamily: "'Open Sans', sans-serif",
 
-    '& > p':{
+    '& p':{
       fontSize: '1.3rem',
       lineHeight: 2,
-      textAlign: 'justify'
+      textAlign: 'justify',
+      wordBreak: 'break-all'
     },
 
     '& div':{
@@ -65,6 +67,10 @@ export const useStyles = makeStyles((theme) => ({
           backgroundColor: $primaryColor
         }
       }
+    },
+
+    '& div:last-of-type': {
+      marginBottom: 0
     }
   }
 }));
