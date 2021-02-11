@@ -1,7 +1,9 @@
 import axios from 'axios';
+//let url = 'http://localhost:5000/api';
+let url = 'https://api.daca.org.ng/api';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://api.daca.org.ng/api'
+  baseURL: url
 });
 
 const token = typeof window == 'undefined' ? null : localStorage.getItem('token');

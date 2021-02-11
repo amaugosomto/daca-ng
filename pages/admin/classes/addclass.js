@@ -6,6 +6,9 @@ import Swal from 'sweetalert2';
 import { useRouter } from 'next/router';
 import { Button, FormControl, Grid, InputLabel, 
   MenuItem, Select, TextField, Typography } from '@material-ui/core';
+  
+// import ImageUploader from 'react-images-upload';
+import { useFileUpload } from 'use-file-upload';
 
 import validators from '../../../middlewares/validators';
 import api from '../../../middlewares/axiosConfig';
@@ -19,12 +22,16 @@ const useStyles = makeStyles((theme) => ({
 export const addclass = (props) => {
   const classes = useStyles();
   const editorRef = useRef();
+  const fileRef = useRef();
   const router = useRouter();
   let editClassId = 0;
+  const [file, setFile] = useState();
+  const [imageSrc, setImageSrc] = useState("");
 
   const [editorLoaded, setEditorLoaded] = useState(false);
   const { CKEditor, ClassicEditor } = editorRef.current || {};
   const [ CKEData, setCKEData ] = useState("");
+  const [ classId, setClassId ] = useState(0);
 
   const [titleErrorMsg, settitleErrorMsg] = useState("");
   const [titleError, settitleError] = useState(false);
@@ -50,6 +57,41 @@ export const addclass = (props) => {
     setEditorLoaded(true);
     checkIfEdit();
   }, []);
+
+  const fileOnChange = (e) => {
+    e ? e.preventDefault() : '';
+    let files = fileRef.current.files;
+    let extention = '';
+
+    if (files.length < 1)
+      return;
+
+    let fileName = files[0].name;
+    let lastDot = fileName.lastIndexOf('.');
+
+    extention = fileName.substring(lastDot + 1).toLowerCase();
+
+    if (extention == "png" || extention == "jpeg" || extention == "jpg" || extension == 'webp') {
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        setImageSrc(e.target.result);
+        setFile(files[0]);
+      }
+      reader.readAsDataURL(files[0]);
+
+    } else {
+      Swal.fire({
+        title: 'error',
+        text: 'please select only images with extentions of png, jpeg, jpg and webp',
+        icon: 'error',
+        timer: 1500
+      });
+
+      return;
+    }
+    
+  }
 
   const checkIfEdit = async () => {
     let classId = getClassIdFromRoute();
@@ -90,6 +132,12 @@ export const addclass = (props) => {
     document.getElementById('class_title').value = data.classTitle;
     document.getElementById('class_tutor').value = data.tutor;
     editClassId = data.id;
+    setClassId(data.id)
+    let domain = location.hostname.toLowerCase().includes('localhost') ? 
+      'http://localhost:5000': 'https://api.daca.org.ng';
+    let imageName = data.imageName;
+
+    imageName != '' ? setImageSrc(`${domain}/${imageName}`) : '';
   }
 
   const getClassIdFromRoute = () => {
@@ -157,29 +205,32 @@ export const addclass = (props) => {
     setSaveClassText("loading...");
     setSaveButtonState(true);
 
-    let data = {
-      classBody: CKEData,
-      ClassTypeId: typeValue,
-      classTitle: document.getElementById('class_title').value,
-      tutor: document.getElementById('class_tutor').value
-    }
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('classBody', CKEData);
+    formData.append('ClassTypeId', typeValue);
+    formData.append('classTitle', document.getElementById('class_title').value);
+    formData.append('tutor', document.getElementById('class_tutor').value);
 
-    api.post("/classes/addClass", data)
+    api.post("/classes/addClass", formData)
       .then(() => {
         Swal.fire({
           title: 'success',
           text: 'Successfully added a class',
           icon: 'success',
-          timer: 1500
+          timer: 2500,
+          confirmButtonText: 'ok'
         });
 
         router.push("/admin/classes");
+
       }).catch (err => {
         Swal.fire({
           title: 'error',
           text: err ? err.data.msg : 'an error occured',
           icon: 'error',
-          timer: 1500
+          timer: 3000,
+          confirmButtonText: 'ok'
         });
 
         setSaveClassText("save class");
@@ -202,19 +253,22 @@ export const addclass = (props) => {
     setUpdateClassText("loading...");
     setUpdateButtonState(true);
 
-    let data = {
-      classBody: CKEData,
-      ClassTypeId: typeValue,
-      ClassId: editClassId
-    }
-
-    api.post("/classes/editClass", data)
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('classBody', CKEData);
+    formData.append('ClassTypeId', typeValue);
+    formData.append('ClassId', classId);
+    formData.append('classTitle', document.getElementById('class_title').value);
+    formData.append('tutor', document.getElementById('class_tutor').value);
+    
+    api.post("/classes/editClass", formData)
       .then(() => {
         Swal.fire({
           title: 'success',
           text: 'Successfully edited a class',
           icon: 'success',
-          timer: 1500
+          timer: 2500,
+          confirmButtonText: 'ok'
         });
 
         router.push("/admin/classes");
@@ -223,7 +277,8 @@ export const addclass = (props) => {
           title: 'error',
           text: err ? err.data.msg : 'an error occured',
           icon: 'error',
-          timer: 1500
+          timer: 3000,
+          confirmButtonText: 'ok'
         });
 
         setUpdateClassText("update class");
@@ -235,63 +290,95 @@ export const addclass = (props) => {
     <AdminLayout>
       <Typography variant="h5" style={{marginBottom:'1rem', fontWeight: '500'}}> Add Classes</Typography>
       <Grid container>
-        <Grid item xs={12} sm={5} style={{paddingRight: '1rem'}}>
-          <TextField 
-            fullWidth 
-            id="class_title"
-            label="Class Title" 
-            variant="outlined" 
-            required 
-            autoFocus
-            error={titleError}
-            helperText={titleErrorMsg}
-            onBlur={checkClassTitle}
-            onKeyUp={checkClassTitle}
-          />
+        <Grid item xs={12} sm={4}>
+          <div style={{paddingRight: '1rem'}}>
+            <label htmlFor="btn-upload">
+              <input
+                id="btn-upload"
+                name="btn-upload"
+                style={{ display: 'none' }}
+                type="file" 
+                ref={fileRef} 
+                onChange={fileOnChange}
+              />
+              <Button
+                className="btn-choose"
+                variant="outlined"
+                component="span" >
+                Choose Files
+              </Button>
+            </label>
+
+            {imageSrc ? (
+              <div style={{width: '100%', marginTop: '1rem'}}>
+                <img src={imageSrc} alt='preview' style={{width: 'inherit'}} />
+              </div>
+            ) : (
+              <span>No file selected</span>
+            )}
+          </div>
         </Grid>
-        <Grid item xs={12} sm={5} style={{paddingLeft: '1rem'}}>
-          <TextField 
-            fullWidth 
-            id="class_tutor" 
-            label="Tutor" 
-            variant="outlined"
-            error={tutorError}
-            helperText={tutorErrorMsg}
-            onBlur={checkTutor}
-            onKeyUp={checkTutor}
-            required
-          />
-        </Grid>
-        <Grid item xs={12} sm={2} style={{paddingLeft: '1rem'}}>
-          <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel id="demo-simple-select-outlined-label">Type</InputLabel>
-            <Select
-              labelId="demo-simple-select-outlined-label"
-              id="demo-simple-select-outlined"
-              value={typeValue}
-              onChange={typeChangeHandle}
-              label="Age"
-              fullWidth
-            >
-              <MenuItem value={1}>Basic</MenuItem>
-              <MenuItem value={2}>Advanced</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        
-        <Grid item xs={12} style={{marginTop: '2rem'}}>
-          {editorLoaded ? 
-            <CKEditor
-              editor={ ClassicEditor }
-              data={CKEData}
-              onChange={ ( event, editor ) => {
-                  const data = editor.getData();
-                  setCKEData(data);
-              } }
-            /> : 
-            <div>Editor loading...</div> 
-          }
-          
+        <Grid item xs={12} sm={8}>
+          <Grid container>
+            <Grid item xs={12} sm={5} style={{paddingRight: '1rem'}}>
+              <TextField 
+                fullWidth 
+                id="class_title"
+                label="Class Title" 
+                variant="outlined" 
+                required 
+                autoFocus
+                error={titleError}
+                helperText={titleErrorMsg}
+                onBlur={checkClassTitle}
+                onKeyUp={checkClassTitle}
+              />
+            </Grid>
+            <Grid item xs={12} sm={5} style={{paddingLeft: '1rem'}}>
+              <TextField 
+                fullWidth 
+                id="class_tutor" 
+                label="Tutor" 
+                variant="outlined"
+                error={tutorError}
+                helperText={tutorErrorMsg}
+                onBlur={checkTutor}
+                onKeyUp={checkTutor}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={2} style={{paddingLeft: '1rem'}}>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel id="demo-simple-select-outlined-label">Type</InputLabel>
+                <Select
+                  labelId="demo-simple-select-outlined-label"
+                  id="demo-simple-select-outlined"
+                  value={typeValue}
+                  onChange={typeChangeHandle}
+                  label="Age"
+                  fullWidth
+                >
+                  <MenuItem value={1}>Basic</MenuItem>
+                  <MenuItem value={2}>Advanced</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} style={{marginTop: '2rem'}}>
+            {editorLoaded ? 
+              <CKEditor
+                editor={ ClassicEditor }
+                data={CKEData}
+                onChange={ ( event, editor ) => {
+                    const data = editor.getData();
+                    setCKEData(data);
+                } }
+              /> : 
+              <div>Editor loading...</div> 
+            }
+            
+          </Grid>
+
         </Grid>
       </Grid>
 
