@@ -121,7 +121,7 @@ const Login = function(props) {
     return false;
   }
   const userSignIn = async (e) => {
-    e.preventDefault();
+    e ? e.preventDefault() : '';
 
     if (!checkEmail() || !checkPassword()) {
       Swal.fire({
@@ -160,9 +160,9 @@ const Login = function(props) {
 
         let redirect = getRedirectFromRoute();
         if (redirect){
-          return router.push(redirect);
+          return location.href = redirect;
         }
-        router.push("/Classes");
+        router.push("/Courses");
       }).catch(res => {
         Swal.fire({
           title: 'error',

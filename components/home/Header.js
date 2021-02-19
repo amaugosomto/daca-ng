@@ -106,13 +106,13 @@ const PrimarySearchAppBar = function (props) {
   const router = useRouter();
 
   const isActive = (href) => {
-    return router.pathname === href;
+    return router.pathname.toLowerCase() === href.toLowerCase();
   }
 
   const isClassRoom = () => {
     let pathName = router.pathname.toLowerCase();
   
-    return pathName.includes('/classes') || pathName.includes('/auth');
+    return pathName.includes('/courses') || pathName.includes('/auth');
   }
   
   const classes = useStyles();
@@ -209,9 +209,9 @@ const PrimarySearchAppBar = function (props) {
         </Link>
       </MenuItem>
       <MenuItem>
-        <Link href="/Classes" 
-          className={cx(classes.button, isActive('/Classes') ? classes.active : '')}>
-          <a>Classes</a>
+        <Link href="/Courses" 
+          className={cx(classes.button, isActive('/Courses') ? classes.active : '')}>
+          <a>Courses</a>
         </Link>
       </MenuItem>
       <MenuItem>
@@ -291,9 +291,9 @@ const PrimarySearchAppBar = function (props) {
                 <a>Contact Us</a>
               </Link>
             </Button>
-            <Button size="small" className={cx(classes.button, isActive('/Classes') ? classes.active : '')} color="inherit">
-              <Link href="/Classes">
-                <a>Classes</a>
+            <Button size="small" className={cx(classes.button, isActive('/Courses') ? classes.active : '')} color="inherit">
+              <Link href="/Courses">
+                <a>Courses</a>
               </Link>
             </Button>
             

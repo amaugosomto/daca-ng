@@ -6,32 +6,32 @@ module.exports = {
   async rewrites() {
     return [
       {
-        source: "/Classes", 
-        destination: "/classes"
+        source: "/Courses", 
+        destination: "/courses"
       },
       {
-        source: "/Classes/classroom", 
-        destination: "/classes/classroom"
+        source: "/Courses/classroom", 
+        destination: "/courses/classroom"
       },
       {
-        source: "/classes/Classroom", 
-        destination: "/classes/classroom"
+        source: "/Courses/Classroom", 
+        destination: "/courses/classroom"
       },
       {
-        source: "/Classes/Classroom", 
-        destination: "/classes/classroom"
+        source: "/Courses/Classroom", 
+        destination: "/courses/classroom"
       },
       {
-        source: "/Classes/quiz", 
-        destination: "/classes/quiz"
+        source: "/Courses/quiz", 
+        destination: "/courses/quiz"
       },
       {
-        source: "/Classes/Quiz", 
-        destination: "/classes/quiz"
+        source: "/Courses/Quiz", 
+        destination: "/courses/quiz"
       },
       {
-        source: "/classes/Quiz", 
-        destination: "/classes/quiz"
+        source: "/Courses/Quiz", 
+        destination: "/courses/quiz"
       },
       {
         source: "/Admin", 

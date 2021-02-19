@@ -33,18 +33,25 @@ export const exam = (props) => {
   const checkUser = async () => {
     await props.reintialiseState();
     let isUserLoggedIn = await props.isUserLoggedIn();
-    let quizId = getExamIdFromRoute();
+    let classId = getClassIdFromRoute();
+    
+    if (classId == false || !isUserLoggedIn)
+      return router.push('/Courses');
 
-    if (quizId == false || !isUserLoggedIn)
-      return router.push('/Classes');
-
-    getQuiz(quizId);
+    getQuiz(classId);
     window.scrollTo(0, 0);
   }
 
-  const getQuiz = async (quizId) => {
-    let quizResponse = await api.get('/classes/getAllQuizByClassId/' + quizId)
-      .then(res => res)
+  const getQuiz = async (classId) => {
+    await api.get('/classes/getAllQuizByClassId/' + classId)
+      .then(res => {
+        let quizData = res.data.data;
+        let quizIds = quizData.Quizzes.map(quiz => `quiz${quiz.id}`);
+
+        setQuiz(quizData);
+        setQuizIds(quizIds);
+        setLoading(false);  
+      })
       .catch(err => {
         Swal.fire({
           title: 'Error!',
@@ -53,24 +60,17 @@ export const exam = (props) => {
           timer: 1500
         });
 
-        return router.push('/Classes');
+        return router.push('/Courses');
       });
-
-    let quizData = quizResponse.data.data;
-    let quizIds = quizData.Quizzes.map(quiz => `quiz${quiz.id}`);
-
-    setQuiz(quizData);
-    setQuizIds(quizIds);
-    setLoading(false);
   }
 
-  const getExamIdFromRoute = () => {
+  const getClassIdFromRoute = () => {
     let searchParams = new URLSearchParams(window.location.search);
-    if (searchParams.has("quizId")) {
+    if (searchParams.has("classId")) {
       let search = location.search;
-      let quizId = search.replace("?quizId=", '');
+      let classId = search.replace("?classId=", '');
       
-      return quizId;
+      return classId;
     }
     return false;
   }
@@ -94,17 +94,47 @@ export const exam = (props) => {
       timer: 1500,
       allowOutsideClick: false,
       showConfirmButton: false
-    }).then(() => {
+    }).then(async () => {
+      await api.get('/classes/setStudentClass/' + getClassIdFromRoute());
+      let quizResponse = await markQuiz();
+
+      if (quizResponse.status == 500) {
+        Swal.fire({
+          title: 'error',
+          text: 'Could not submit quiz, please refresh page, if error persits, contact admin',
+          icon: 'error',
+          timer: 2500,
+          confirmButtonText: 'Ok'
+        });
+
+        return
+      }
+
+      if (quizResponse.status == 204) {
+        Swal.fire({
+          title: 'success',
+          text: 'You have successfully reached the end of the courses, Congratulations',
+          icon: 'success',
+          confirmButtonText: 'Ok'
+        }).then(() => {
+          router.push('/');
+        });
+
+        return;
+      }
+
+      let classId = quizResponse.data.data.ClassId;
 
       Swal.fire({
         title: 'success',
         text: 'Finished marking quiz',
         icon: 'success',
-        timer: 1000,
+        timer: 2500,
         confirmButtonText: 'Ok'
+      }).then(() => {
+        router.push(`/courses/classroom?classId=${classId}`)
       });
 
-      markQuiz();
     });
   }
 
@@ -149,7 +179,7 @@ export const exam = (props) => {
     return state;
   }
 
-  const markQuiz = () => {
+  const markQuiz = async () => {
     for (let i = 0; i < quizIds.length; i++) {
       const quizId = quizIds[i];
       
@@ -162,6 +192,7 @@ export const exam = (props) => {
       let quizInputElements = document.querySelectorAll(`#${quizId} input`);
       let userPickedInputLabelElement = '';
       let correctAnswerLabelElement = '';
+      let numberCorrectAnswers = 0;
 
       quizInputElements.forEach(input => {
         if (input.checked) {
@@ -169,11 +200,23 @@ export const exam = (props) => {
         }
         if (input.value == quizCorrectAnswer) {
           correctAnswerLabelElement = input.parentNode.parentElement.parentElement.children[1];
+          ++numberCorrectAnswers;
         }
       });
       
       userPickedInputLabelElement.style = "color:red;font-weight:600";
       correctAnswerLabelElement.style = "color:green;font-weight:600";
+
+      let data = {
+        classId: getClassIdFromRoute(),
+        numberCorrectAnswers
+      }
+
+      let savedUserAnswer = await api.post('/classes/setAnsweredQuiz', data)
+        .then()
+        .catch(err => err);
+
+      return savedUserAnswer;
       
     }
   }
@@ -182,12 +225,12 @@ export const exam = (props) => {
     <HomeLayout>
       <>
         <Head>
-          <title>Daca-ng - Classes</title>
+          <title>Daca-ng - Courses</title>
           <meta charSet="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <meta name="copyright" content={`Copyright © Daca-ng ${new Date().getFullYear()}`} />
-          <meta name="description" content="Online exam for preparatory classes" />
-          <meta name="robots" content="Classes"></meta>
+          <meta name="description" content="Online exam for preparatory Courses" />
+          <meta name="robots" content="Maturity Courses"></meta>
           <link rel="icon" href="/favicon.ico" />
           <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></link>
@@ -233,7 +276,10 @@ export const exam = (props) => {
               {loading ? '' 
               :
                 <CardActions className={styles.cardActions}>
-                  <Button variant="contained">Back to class</Button>
+                  <Button variant="contained" 
+                    onClick={() => router.push(`/courses/classroom?classId=${getClassIdFromRoute()}`)}>
+                      Back to class
+                  </Button>
                   <Button variant="contained" onClick={() => checkQuiz()} >Submit</Button>
                 </CardActions>
               }

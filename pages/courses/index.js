@@ -15,6 +15,7 @@ import { Row, Item } from '@mui-treasury/components/flex';
 import { Info, InfoSubtitle, InfoTitle } from '@mui-treasury/components/info';
 import { useNewsInfoStyles } from '@mui-treasury/styles/info/news';
 import ClassDialog from '../../components/classes/sneakModal';
+import { useRouter } from 'next/router';
 
 import {connect} from 'react-redux';
 import {reintialiseState} from '../../redux/actions/authActions';
@@ -142,6 +143,7 @@ const useStyles = makeStyles((theme) => ({
 function Classes(props){
   const styles = componentStyles();
   const cardStyles = useStyles();
+  const router = useRouter();
 
   const mediaStyles = useWideCardMediaStyles();
   const [open, setOpen] = React.useState(false);
@@ -212,8 +214,9 @@ function Classes(props){
                       <Typography variant={'h2'} className={cardStyles.title}>
                         Beginner Classes are meant to prepare you for a life with Christ
                       </Typography>
-                      <Button variant="contained" className={cardStyles.Button} onClick={() => handleOpen(1)}>
-                        start learning
+                      <Button variant="contained" className={cardStyles.Button} 
+                        onClick={() => router.push('/courses/classdetails?type=1')}>
+                        see more
                       </Button>
                     </div>
                   </Box>
@@ -260,8 +263,9 @@ function Classes(props){
                       <Typography variant={'h2'} className={cardStyles.title}>
                         Advanced classes meant to deepen your understanding of the kingdom
                       </Typography>
-                      <Button variant="contained" className={cardStyles.Button} onClick={() => handleOpen(2)}>
-                        start learning
+                      <Button variant="contained" className={cardStyles.Button} 
+                        onClick={() =>  router.push('/courses/classdetails?type=2')}>
+                        see more
                       </Button>
                     </div>
                   </Box>

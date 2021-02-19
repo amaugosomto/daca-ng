@@ -101,7 +101,7 @@ const Footer = () => (
           <Grid item xs={12} md={6}>
             &copy; {new Date().getFullYear()} All Rights Reserved - Divine Ambassadors Christian Assembly - 
             <Link href="/">
-              <a>DACA</a>
+              <span>DACA</span>
             </Link>
           </Grid>
         </Grid>

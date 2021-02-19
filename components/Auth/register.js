@@ -70,7 +70,7 @@ const Register = function({authLogin}) {
   const [confirmPasswordError, setconfirmPasswordError] = useState(false);
 
   const checkFirstName = (e) => {
-    e.preventDefault();
+    e ? e.preventDefault() : '';
     
     let id = 'firstName';
 
@@ -89,7 +89,7 @@ const Register = function({authLogin}) {
   }
 
   const checkLastName = (e) => {
-    e.preventDefault();
+    e ? e.preventDefault() : '';
     
     let id = 'lastName';
 
@@ -108,7 +108,7 @@ const Register = function({authLogin}) {
   }
 
   const checkEmail = (e) => {
-    e.preventDefault();
+    e ? e.preventDefault() : '';
     
     let id = 'email';
 
@@ -133,7 +133,7 @@ const Register = function({authLogin}) {
   }
 
   const checkPassword = (e) => {
-    e.preventDefault();
+    e ? e.preventDefault() : '';
     
     let id = 'password';
 
@@ -158,7 +158,7 @@ const Register = function({authLogin}) {
   }
 
   const checkConfirmPassword = (e) => {
-    e.preventDefault();
+    e ? e.preventDefault() : '';
     
     let id = 'confirmPassword';
 
@@ -183,7 +183,7 @@ const Register = function({authLogin}) {
   }
 
   const submit = async (e) => {
-    e.preventDefault();
+    e ? e.preventDefault() : '';
 
     if (!checkFirstName() || !checkLastName() || !checkEmail() || !checkPassword() || !checkConfirmPassword() ){
       Swal.fire({
@@ -226,7 +226,9 @@ const Register = function({authLogin}) {
       .catch((res) => {
         Swal.fire({
           title: 'Error!',
-          text: res.data.msg.length > 0 ? res.data.msg : 'Error registering user, please contact admin',
+          text: res ? res.data.msg.length > 0 ? res.data.msg 
+            : 'Error registering user, please contact admin'
+            : 'Error registering user, please contact admin',
           icon: 'error',
           confirmButtonText: 'Ok'
         });

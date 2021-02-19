@@ -149,7 +149,7 @@ export const classes = (props) => {
           .catch(err => {
             Swal.fire({
               title: 'error',
-              text: 'error trying to disapproved class',
+              text: err ? err.data.msg : 'error trying to disapproved class',
               icon: 'error',
               timer: 2000
             });
@@ -187,7 +187,7 @@ export const classes = (props) => {
           .catch(err => {
             Swal.fire({
               title: 'error',
-              text: 'error trying to approve class',
+              text: err ? err.data.msg : 'error trying to approve class',
               icon: 'error',
               timer: 2000
             });

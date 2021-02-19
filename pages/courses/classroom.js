@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 
 import componentStyles from '../../styles/classroomStyles';
 import { reintialiseState, isUserLoggedIn } from '../../redux/actions/authActions';
+import { getUserCurrentClass, resetisWrongClass, setPreviousClass } from '../../redux/actions/classActions';
 import { Avatar, Button, Container, Typography } from '@material-ui/core';
 import api from '../../middlewares/axiosConfig';
 
@@ -16,12 +17,19 @@ export const classroom = (props) => {
   const router = useRouter();
 
   const [Class, setClass] = useState({});
+  const [ClassId, setClassId] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     checkUser();
-    window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    if (props.resumeClassId > 0) {
+      getClassByClassId(props.resumeClassId);
+    }
+    
+  }, [props.resumeClassId]);
 
   const checkUser = async () => {
     await props.reintialiseState();
@@ -29,28 +37,47 @@ export const classroom = (props) => {
     let classId = getClassIdFromRoute();
 
     if (classId == false)
-      return router.push('/Classes');
+      return router.push('/Courses');
 
     if (!isUserLoggedIn) 
-      return router.push(`/auth?redirect=classes/classroom?classId=${classId}`);
+      return router.push(`/auth?redirect=courses/classroom?classId=${classId}`);
 
-    getClassByClassId(classId);
+    await setClassId(classId);
+    console.log(classId)
+    await props.getUserCurrentClass(classId);
+    //getClassByClassId(classId);
   }
 
   const getClassIdFromRoute = () => {
-    let searchParams = new URLSearchParams(window.location.search);
-    if (searchParams.has("classId")) {
+    let searchParams = window.location.search
+    if (searchParams.includes("classId")) {
       let search = location.search;
       let classId = search.replace("?classId=", '');
-      
       return classId
     }
     return false;
   }
 
   const getClassByClassId = async (classId) => {
-    let classResponse = await api.get('/classes/getclass/' + classId)
-      .then(res => res)
+    await api.get('/classes/getclass/' + classId)
+      .then(res => {
+        let Class = res.data.data;
+        setClass(Class);
+        setLoading(false);
+        window.scrollTo(0, 0);
+        props.setPreviousClass(Class.previousClassId);
+
+        if (props.isWrongClass) {
+          Swal.fire({
+            title: 'info',
+            text: 'You are not qualified to take the class you selected, you are required to start from here',
+            icon: 'info',
+            showConfirmButton: true
+          }).then(() => {
+            props.resetisWrongClass();
+          });
+        }
+      })
       .catch(err => {
         Swal.fire({
           title: 'error',
@@ -59,22 +86,25 @@ export const classroom = (props) => {
           timer: 2000
         });
 
-        router.push('/classes');
+        return router.push('/courses');
       });
 
-    let Class = classResponse.data.data;
-    setClass(Class);
-    setLoading(false);
   }
 
-  const openQuizArea = (quizId) => {
+  const openQuizArea = (classId) => {
     router.push({
-      pathname: '/Classes/quiz',
-      query: { quizId }
+      pathname: '/courses/quiz',
+      query: { classId }
     });
   }
+
   function createMarkup(html) {
     return {__html: html};
+  }
+
+  async function changeRoute(classId) {
+    await router.push(`/courses/classroom?classId=${classId}`);
+    checkUser();
   }
 
   return (
@@ -124,7 +154,12 @@ export const classroom = (props) => {
             
             {loading ? '' : 
               <div>
-                <Button variant="contained">Previous class</Button>
+                {props.userFirstCLass ? ''
+                  : props.previousClassId < 1 ? '' :
+                    <Button variant="contained" 
+                      onClick={() => changeRoute(props.previousClassId)}>
+                        Previous class</Button>
+                }
                 <Button variant="contained" onClick={() => openQuizArea(Class.id)} >Take Quiz</Button>
               </div>
             }
@@ -140,12 +175,19 @@ export const classroom = (props) => {
 }
 
 const mapStateToProps = (state) => ({
-  user: state.authPage.user
+  user: state.authPage.user,
+  resumeClassId: state.classReducer.userCurrentClassId,
+  userFirstClass: state.classReducer.userFirstCLass,
+  isWrongClass: state.classReducer.isWrongClass,
+  previousClassId: state.classReducer.previousClass,
 });
 
 const mapDispatchToProps = {
   reintialiseState,
-  isUserLoggedIn
+  isUserLoggedIn,
+  getUserCurrentClass,
+  resetisWrongClass,
+  setPreviousClass
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(classroom)
