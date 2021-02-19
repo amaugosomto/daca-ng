@@ -1,8 +1,8 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-let url = 'http://localhost:5000/api';
-//let url = 'https://api.daca.org.ng/api';
+//let url = 'http://localhost:5000/api';
+let url = 'https://api.daca.org.ng/api';
 
 const axiosInstance = axios.create({
   baseURL: url
