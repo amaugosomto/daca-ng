@@ -39,6 +39,9 @@ export const addclass = (props) => {
   const [tutorErrorMsg, settutorErrorMsg] = useState("");
   const [tutorError, settutorError] = useState(false);
 
+  const [descErrorMsg, setDescErrorMsg] = useState("");
+  const [descError, setDescError] = useState(false);
+
   const [saveClassText, setSaveClassText] = useState("save class");
   const [saveButtonState, setSaveButtonState] = useState(false);
 
@@ -131,6 +134,7 @@ export const addclass = (props) => {
     settypeValue(data.ClassTypeId);
     document.getElementById('class_title').value = data.classTitle;
     document.getElementById('class_tutor').value = data.tutor;
+    document.getElementById('class_desc').value = data.description;
     editClassId = data.id;
     setClassId(data.id)
     let domain = location.hostname.toLowerCase().includes('localhost') ? 
@@ -176,6 +180,23 @@ export const addclass = (props) => {
     let hasContent = validators.isRequired(id);
 
     if (hasContent) {
+      setDescError(hasContent);
+      setDescErrorMsg('field is required');
+      return false;
+    }
+
+    setDescError(hasContent);
+    setDescErrorMsg('');
+    return true;
+  }
+
+  const checkDesc = (e) => {
+    e ? e.preventDefault() : '';
+    
+    let id = 'class_desc';
+    let hasContent = validators.isRequired(id);
+
+    if (hasContent) {
       settutorError(hasContent);
       settutorErrorMsg('field is required');
       return false;
@@ -191,7 +212,7 @@ export const addclass = (props) => {
   }
 
   const saveClass = () => {
-    if (!checkClassTitle() || !checkTutor()) {
+    if (!checkClassTitle() || !checkTutor() || !checkDesc()) {
       Swal.fire({
         title: 'Error!',
         text: 'Please fill in all required fields',
@@ -211,6 +232,7 @@ export const addclass = (props) => {
     formData.append('ClassTypeId', typeValue);
     formData.append('classTitle', document.getElementById('class_title').value);
     formData.append('tutor', document.getElementById('class_tutor').value);
+    formData.append('description', document.getElementById('class_desc').value);
 
     api.post("/classes/addClass", formData)
       .then(() => {
@@ -260,6 +282,7 @@ export const addclass = (props) => {
     formData.append('ClassId', classId);
     formData.append('classTitle', document.getElementById('class_title').value);
     formData.append('tutor', document.getElementById('class_tutor').value);
+    formData.append('description', document.getElementById('class_desc').value);
     
     api.post("/classes/editClass", formData)
       .then(() => {
@@ -320,7 +343,7 @@ export const addclass = (props) => {
         </Grid>
         <Grid item xs={12} sm={8}>
           <Grid container>
-            <Grid item xs={12} sm={5} style={{paddingRight: '1rem'}}>
+            <Grid item xs={12} md={5} style={{paddingRight: '1rem'}}>
               <TextField 
                 fullWidth 
                 id="class_title"
@@ -334,7 +357,7 @@ export const addclass = (props) => {
                 onKeyUp={checkClassTitle}
               />
             </Grid>
-            <Grid item xs={12} sm={5} style={{paddingLeft: '1rem'}}>
+            <Grid item xs={12} sm={6} md={5} style={{paddingLeft: '1rem'}}>
               <TextField 
                 fullWidth 
                 id="class_tutor" 
@@ -347,7 +370,7 @@ export const addclass = (props) => {
                 required
               />
             </Grid>
-            <Grid item xs={12} sm={2} style={{paddingLeft: '1rem'}}>
+            <Grid item xs={12} sm={6} md={2} style={{paddingLeft: '1rem'}}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel id="demo-simple-select-outlined-label">Type</InputLabel>
                 <Select
@@ -363,8 +386,23 @@ export const addclass = (props) => {
                 </Select>
               </FormControl>
             </Grid>
+            <Grid item xs={12} style={{marginTop: '1rem'}}>
+            <TextField
+              placeholder="Description"
+              multiline
+              id="class_desc"
+              rows={2}
+              rowsMax={4}
+              error={descError}
+              helperText={descErrorMsg}
+              onBlur={checkDesc}
+              onKeyUp={checkDesc}
+              fullWidth
+              variant="outlined"
+            />
+            </Grid>
           </Grid>
-          <Grid item xs={12} style={{marginTop: '2rem'}}>
+          <Grid item xs={12} style={{marginTop: '1rem'}}>
             {editorLoaded ? 
               <CKEditor
                 editor={ ClassicEditor }

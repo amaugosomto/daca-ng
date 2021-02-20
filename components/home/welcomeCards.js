@@ -58,7 +58,7 @@ export const WelcomeCards = React.memo(function NewsCard() {
                 classes={textCardContentStyles}
                 heading={'Our Church'}
                 body={
-                  'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.'
+                  'We’re mandated to raise people that are spiritually vibrant,financially stable and socially responsible.'
                 }
               />
               <Button color={'primary'} fullWidth className={styles.cta}>
@@ -78,9 +78,9 @@ export const WelcomeCards = React.memo(function NewsCard() {
             <CardContent className={styles.content}>
               <TextInfoContent
                 classes={textCardContentStyles}
-                heading={'Our History'}
+                heading={'Our Mission'}
                 body={
-                  'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.'
+                  'We are committed to helping you develop a buoyant spiritual relationship with God.'
                 }
               />
               <Button color={'primary'} fullWidth className={styles.cta}>
@@ -100,9 +100,9 @@ export const WelcomeCards = React.memo(function NewsCard() {
             <CardContent className={styles.content}>
               <TextInfoContent
                 classes={textCardContentStyles}
-                heading={'Our Sermons'}
+                heading={'Core Values'}
                 body={
-                  'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.'
+                  'To model the nature of God which is love and a culture of excellence while delivering selfless service.'
                 }
               />
               <Button color={'primary'} fullWidth className={styles.cta}>

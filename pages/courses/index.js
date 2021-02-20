@@ -210,7 +210,7 @@ function Classes(props){
                       }
                     />
                     <div className={cardStyles.content}>
-                      <div className={cardStyles.tag}>Beginner Classes</div>
+                      <div className={cardStyles.tag}>Basic Discipleship Class</div>
                       <Typography variant={'h2'} className={cardStyles.title}>
                         Beginner Classes are meant to prepare you for a life with Christ
                       </Typography>
@@ -259,7 +259,7 @@ function Classes(props){
                       }
                     />
                     <div className={cardStyles.content}>
-                      <div className={cardStyles.tag}>Advanced Classes</div>
+                      <div className={cardStyles.tag}>Advanced Discipleship Class</div>
                       <Typography variant={'h2'} className={cardStyles.title}>
                         Advanced classes meant to deepen your understanding of the kingdom
                       </Typography>

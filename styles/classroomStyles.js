@@ -46,16 +46,18 @@ export const useStyles = makeStyles((theme) => ({
     fontFamily: "'Open Sans', sans-serif",
 
     '& p':{
-      fontSize: '1.3rem',
+      fontSize: '1rem',
       lineHeight: 2,
       textAlign: 'justify',
       wordBreak: 'break-all'
     },
 
+    '& li':{
+      fontSize: '1rem',
+    },
+
     '& div':{
-      display: 'flex',
       margin: '3rem 0',
-      justifyContent: 'space-between',
 
       '& button': {
         fontSize: '.9rem',

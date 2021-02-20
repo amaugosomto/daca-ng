@@ -440,7 +440,7 @@ function classdetails(props) {
                               {Class.classTitle}
                             </Typography>
                             <Typography variant="body2" color="textSecondary" component="p">
-                              {cutText(Class.classBody)}
+                              {cutText(Class.description.length < 1 ? Class.classTitle : Class.description)}
                             </Typography>
                             <div className={classes.pastor}>
                               <Typography variant="caption">

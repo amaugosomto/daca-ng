@@ -53,8 +53,7 @@ export const classes = (props) => {
       let tableData = [];
 
       classes.map((val) => {
-        let cell = ['',val.classTitle, val.tutor, `
-          ${val.isApproved}`,`${val.ClassTypeId}`, val.id];
+        let cell = ['',val.classTitle, val.tutor, `${val.isApproved}`,`${val.ClassTypeId}`, val.id];
         tableData.push(cell);
       });
       
@@ -88,7 +87,7 @@ export const classes = (props) => {
       options: {
         filter: false,
         customBodyRender: (value, tableMeta) => {
-          
+          console.log(tableMeta.rowData)
           return (
             <>
               <Button variant="contained" color="primary" size="small" onClick={() => viewClass(value)}> 

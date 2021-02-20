@@ -72,7 +72,9 @@ export default function Home() {
               <Typography variant="caption" id={styles.welcomeMessage}>
                 A church isn't a building--it's the people. We meet at 210 Okigwe Road, Opp Glass House, Owerri. You are welcome to join us.
               </Typography>
+
               <WelcomeCards />
+              
             </Container>
           </section>
 
