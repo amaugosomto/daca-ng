@@ -180,13 +180,13 @@ export const addclass = (props) => {
     let hasContent = validators.isRequired(id);
 
     if (hasContent) {
-      setDescError(hasContent);
-      setDescErrorMsg('field is required');
+      settutorError(hasContent);
+      settutorErrorMsg('field is required');
       return false;
     }
 
-    setDescError(hasContent);
-    setDescErrorMsg('');
+    settutorError(hasContent);
+    settutorErrorMsg('');
     return true;
   }
 
@@ -197,13 +197,13 @@ export const addclass = (props) => {
     let hasContent = validators.isRequired(id);
 
     if (hasContent) {
-      settutorError(hasContent);
-      settutorErrorMsg('field is required');
+      setDescError(hasContent);
+      setDescErrorMsg('field is required');
       return false;
     }
 
-    settutorError(hasContent);
-    settutorErrorMsg('');
+    setDescError(hasContent);
+    setDescErrorMsg('');
     return true;
   }
 
