@@ -1,8 +1,8 @@
 {
   "name": "Daca-ng",
   "short_name": "Daca",
-  "theme_color": "#6d0eb5",
-  "background_color": "#636363",
+  "theme_color": "#6D0EB5",
+  "background_color": "#6D0EB5",
   "display": "standalone",
   "scope": "/",
   "start_url": "/courses",
@@ -11,6 +11,16 @@
       "src": "/icons/icon-192x192.png",
       "type": "image/png",
       "sizes": "192x192"
+    },
+    {
+      "src": "/icons/icon-256x256.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "type": "image/png",
+      "sizes": "384x384"
     },
     {
       "src": "/icons/icon-512x512.png",
