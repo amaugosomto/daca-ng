@@ -7,7 +7,6 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import Head from 'next/head';
 
 import HomeLayout from '../../components/home/HomeLayout';
 import { Container, Grid, IconButton } from '@material-ui/core';
@@ -23,7 +22,8 @@ import Swal from 'sweetalert2';
 import {connect} from 'react-redux';
 import {reintialiseState, isUserLoggedIn} from '../../redux/actions/authActions';
 import { getUserCurrentClass } from '../../redux/actions/classActions';
-import api from '../../middlewares/axiosConfig'
+import api from '../../middlewares/axiosConfig';
+import CustomHead from '../../components/HEAD/head';
 import Skeleton from 'react-loading-skeleton';
 
 const $primaryColor = '#6D0EB5';
@@ -303,17 +303,11 @@ function classdetails(props) {
   return (
     <HomeLayout>
 
-      <Head>
-        <title>Daca-ng - Classes Details</title>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="copyright" content="Classes page for taking online classes and exams" />
-        <meta name="description" content="To model the nature of God(love) and a culture of excellence while delivering selfless service" />
-        <meta name="robots" content="Classes"></meta>
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" />
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></link>
-      </Head>
+      <CustomHead 
+        iosApplicationTitle="Daca-ng Class Details"
+        title="Daca-ng - Classes Details"
+        robots="Classes"
+      />
 
       <main className={classes.main}>
         <div className={classes.banner}>

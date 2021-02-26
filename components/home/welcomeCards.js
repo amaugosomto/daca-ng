@@ -11,6 +11,7 @@ import { useWideCardMediaStyles } from '@mui-treasury/styles/cardMedia/wide';
 import { useN01TextInfoContentStyles } from '@mui-treasury/styles/textInfoContent/n01';
 import { useBouncyShadowStyles } from '@mui-treasury/styles/shadow/bouncy';
 import Grid from '@material-ui/core/Grid';
+import { useRouter } from 'next/router';
 
 const useStyles = makeStyles(({breakpoints}) => ({
   root: {
@@ -38,6 +39,7 @@ const useStyles = makeStyles(({breakpoints}) => ({
 }));
 
 export const WelcomeCards = React.memo(function NewsCard() {
+  const router = useRouter();
   const styles = useStyles();
   const mediaStyles = useWideCardMediaStyles();
   const textCardContentStyles = useN01TextInfoContentStyles();
@@ -61,8 +63,11 @@ export const WelcomeCards = React.memo(function NewsCard() {
                   'We’re mandated to raise people that are spiritually vibrant,financially stable and socially responsible.'
                 }
               />
-              <Button color={'primary'} fullWidth className={styles.cta}>
-                Find Out More <ChevronRightRounded />
+              <Button color={'primary'} 
+                fullWidth 
+                className={styles.cta}
+                onClick={() => router.push('/aboutus')}>
+                  Find Out More <ChevronRightRounded />
               </Button>
             </CardContent>
           </Card>
@@ -83,8 +88,11 @@ export const WelcomeCards = React.memo(function NewsCard() {
                   'We are committed to helping you develop a buoyant spiritual relationship with God.'
                 }
               />
-              <Button color={'primary'} fullWidth className={styles.cta}>
-                Find Out More <ChevronRightRounded />
+              <Button color={'primary'} 
+                fullWidth 
+                className={styles.cta}
+                onClick={() => router.push('/aboutus')}>
+                  Find Out More <ChevronRightRounded />
               </Button>
             </CardContent>
           </Card>
@@ -105,8 +113,11 @@ export const WelcomeCards = React.memo(function NewsCard() {
                   'To model the nature of God which is love and a culture of excellence while delivering selfless service.'
                 }
               />
-              <Button color={'primary'} fullWidth className={styles.cta}>
-                Find Out More <ChevronRightRounded />
+              <Button color={'primary'} 
+                fullWidth 
+                className={styles.cta}
+                onClick={() => router.push('/aboutus')}>
+                  Find Out More <ChevronRightRounded />
               </Button>
             </CardContent>
           </Card>

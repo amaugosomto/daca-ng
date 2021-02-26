@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import { connect } from 'react-redux';
-import Head from 'next/head';
 import { useRouter } from 'next/router';
 import HomeLayout from '../../components/home/HomeLayout';
 import Skeleton from 'react-loading-skeleton';
@@ -11,6 +10,7 @@ import { reintialiseState, isUserLoggedIn } from '../../redux/actions/authAction
 import { getUserCurrentClass, resetisWrongClass, setPreviousClass } from '../../redux/actions/classActions';
 import { Avatar, Button, Container, Typography } from '@material-ui/core';
 import api from '../../middlewares/axiosConfig';
+import CustomHead from '../../components/HEAD/head';
 
 export const classroom = (props) => {
   const styles = componentStyles();
@@ -110,18 +110,11 @@ export const classroom = (props) => {
   return (
     <HomeLayout>
       <>
-        <Head>
-          <title>Daca-ng - Classes</title>
-          <meta charSet="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta name="copyright" content={`Copyright © Daca-ng ${new Date().getFullYear()}`} />
-          <meta name="description" content="Online preparatory classes for christians" />
-          <meta name="robots" content="Classes"></meta>
-          <link rel="icon" href="/favicon.ico" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" />
-          <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></link>
-          <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Yusei+Magic&display=swap" rel="stylesheet" />
-        </Head>
+        <CustomHead 
+          iosApplicationTitle="Daca-ng Classroom"
+          title="Daca-ng - Classroom"
+          robots="Classroom"
+        />  
 
         <main className={styles.main}>
           {/* <Skeleton height={100} count={3} /> */}

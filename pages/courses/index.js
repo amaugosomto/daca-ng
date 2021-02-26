@@ -20,6 +20,8 @@ import { useRouter } from 'next/router';
 import {connect} from 'react-redux';
 import {reintialiseState} from '../../redux/actions/authActions';
 
+import CustomHead from '../../components/HEAD/head';
+
 const useStyles = makeStyles((theme) => ({
   card: {
     minWidth: 320,
@@ -165,17 +167,11 @@ function Classes(props){
   return (
     <HomeLayout>
     <div>
-      <Head>
-        <title>Daca-ng - Classes</title>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="copyright" content="Classes page for taking online classes and exams" />
-        <meta name="description" content="To model the nature of God(love) and a culture of excellence while delivering selfless service" />
-        <meta name="robots" content="Classes"></meta>
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" />
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></link>
-      </Head>
+      <CustomHead 
+        iosApplicationTitle="Daca-ng Classes"
+        title="Daca-ng - Classes"
+        robots="Classes"
+      />
 
       <main className={styles.main}>
         <div className={styles.banner}>

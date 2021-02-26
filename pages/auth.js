@@ -7,21 +7,19 @@ import HomeLayout from "../components/home/HomeLayout";
 import Login from '../components/Auth/login';
 import SignUp from '../components/Auth/register';
 
+import CustomHead from '../components/HEAD/head';
+
 const Auth =  function(props) {
   
   return (
     <div>
       <HomeLayout>
         <Head>
-          <title>Auth</title>
-          <meta charSet="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta name="copyright" content="Login" />
-          <meta name="description" content="To model the nature of God(love) and a culture of excellence while delivering selfless service" />
-          <meta name="robots" content="Login/Register"></meta>
-          <link rel="icon" href="/favicon.ico" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" />
-          <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></link>
+          <CustomHead 
+            iosApplicationTitle="Daca-ng Auth Login-Register"
+            title="Daca-ng - Auth - Login-Register"
+            robots="Auth"
+          />
         </Head>
         {props.authPage == 'login' ? <Login /> : <SignUp />}
       </HomeLayout>

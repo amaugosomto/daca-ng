@@ -1,10 +1,22 @@
 const { getRedirectStatus } = require("next/dist/lib/load-custom-routes");
+const withPWA = require('next-pwa');
 
-module.exports = {
+module.exports = withPWA({
   /* config options here */
+  pwa: {
+    dest: 'public'
+  },
   reactStrictMode: false,
   async rewrites() {
     return [
+      {
+        source: "/Aboutus", 
+        destination: "/aboutus"
+      },
+      {
+        source: "/AboutUs", 
+        destination: "/aboutus"
+      },
       {
         source: "/Courses", 
         destination: "/courses"
@@ -63,4 +75,4 @@ module.exports = {
       },
     ];
   }
-}
+})

@@ -7,7 +7,8 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a lo
 import { Carousel } from 'react-responsive-carousel'; 
 import { Container, Typography, Button} from '@material-ui/core';
 import WithExternalControls from '../components/home/UpcomingEvents'
-import HomeLayout from '../components/home/HomeLayout'
+import HomeLayout from '../components/home/HomeLayout';
+import CustomHead from '../components/HEAD/head';
 
 export default function Home() {
   let [pageLoaded, setPageLoaded] = useState(false);
@@ -27,19 +28,11 @@ export default function Home() {
   return (
     <HomeLayout>
       <div>
-        <Head>
-          <title>Daca-ng</title>
-          <meta charSet="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta name="copyright" content="This Daca-ng website is owned by Divine Ambassadors Christian Assembly" />
-          <meta name="description" content="To model the nature of God(love) and a culture of excellence while delivering selfless service" />
-          <meta name="robots" content="index"></meta>
-          <link rel="icon" href="/favicon.ico" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" />
-          <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></link>
-        </Head>
-
-        
+        <CustomHead 
+          iosApplicationTitle="Daca-ng Home"
+          title="Daca-ng - Home"
+          robots="Classes"
+        />
 
         <main className={styles.main}>
 

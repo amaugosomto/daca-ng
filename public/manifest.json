@@ -1,0 +1,21 @@
+{
+  "name": "Daca-ng",
+  "short_name": "Daca",
+  "theme_color": "#6d0eb5",
+  "background_color": "#636363",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/courses",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

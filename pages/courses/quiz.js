@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import { connect } from 'react-redux';
-import Head from 'next/head';
 import { useRouter } from 'next/router';
 import HomeLayout from '../../components/home/HomeLayout';
 
@@ -17,6 +16,7 @@ import Swal from 'sweetalert2';
 import Skeleton from 'react-loading-skeleton';
 
 import api from '../../middlewares/axiosConfig';
+import CustomHead from '../../components/HEAD/head';
 
 export const exam = (props) => {
   const styles = componentStyles();
@@ -86,56 +86,69 @@ export const exam = (props) => {
 
     document.querySelectorAll("input[type=radio]").forEach(input => 
         input.parentNode.parentElement.parentElement.children[1].style = "");
-
+    
     Swal.fire({
       title: 'info',
-      text: 'Submitting and marking quiz',
+      text: 'Are you sure you want to submit?',
       icon: 'info',
-      timer: 1500,
       allowOutsideClick: false,
-      showConfirmButton: false
-    }).then(async () => {
-      await api.get('/classes/setStudentClass/' + getClassIdFromRoute());
-      let quizResponse = await markQuiz();
-
-      if (quizResponse.status == 500) {
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'yes, submit'
+    }).then(res => {
+      if (res.isConfirmed) {
         Swal.fire({
-          title: 'error',
-          text: 'Could not submit quiz, please refresh page, if error persits, contact admin',
-          icon: 'error',
-          timer: 2500,
-          confirmButtonText: 'Ok'
+          title: 'info',
+          text: 'Submitting and marking quiz',
+          icon: 'info',
+          timer: 1500,
+          allowOutsideClick: false,
+          showConfirmButton: false
+        }).then(async () => {
+          await api.get('/classes/setStudentClass/' + getClassIdFromRoute());
+          let quizResponse = await markQuiz();
+    
+          if (quizResponse.status == 500) {
+            Swal.fire({
+              title: 'error',
+              text: 'Could not submit quiz, please refresh page, if error persits, contact admin',
+              icon: 'error',
+              timer: 2500,
+              confirmButtonText: 'Ok'
+            });
+    
+            return
+          }
+    
+          if (quizResponse.status == 204) {
+            Swal.fire({
+              title: 'success',
+              text: 'You have successfully reached the end of the courses, Congratulations',
+              icon: 'success',
+              confirmButtonText: 'Ok'
+            }).then(() => {
+              router.push('/');
+            });
+    
+            return;
+          }
+    
+          let classId = quizResponse.data.data.ClassId;
+    
+          Swal.fire({
+            title: 'success',
+            text: 'Finished marking quiz',
+            icon: 'success',
+            timer: 2500,
+            confirmButtonText: 'Ok'
+          }).then(() => {
+            router.push(`/courses/classroom?classId=${classId}`)
+          });
+    
         });
-
-        return
       }
+    })
 
-      if (quizResponse.status == 204) {
-        Swal.fire({
-          title: 'success',
-          text: 'You have successfully reached the end of the courses, Congratulations',
-          icon: 'success',
-          confirmButtonText: 'Ok'
-        }).then(() => {
-          router.push('/');
-        });
-
-        return;
-      }
-
-      let classId = quizResponse.data.data.ClassId;
-
-      Swal.fire({
-        title: 'success',
-        text: 'Finished marking quiz',
-        icon: 'success',
-        timer: 2500,
-        confirmButtonText: 'Ok'
-      }).then(() => {
-        router.push(`/courses/classroom?classId=${classId}`)
-      });
-
-    });
   }
 
   const changed = (event, id) => {
@@ -180,6 +193,9 @@ export const exam = (props) => {
   }
 
   const markQuiz = async () => {
+    let studentResponses = [];
+    let numberCorrectAnswers = 0;
+
     for (let i = 0; i < quizIds.length; i++) {
       const quizId = quizIds[i];
       
@@ -189,13 +205,19 @@ export const exam = (props) => {
                                 return quiz.id == realQuizId;
                               }).quizCorrectAns;
       
+      let studentData = {
+        quizCorrectAnswer,
+        quizId : quizId.replace("quiz", ''),
+        classId: getClassIdFromRoute(),
+      }
+
       let quizInputElements = document.querySelectorAll(`#${quizId} input`);
       let userPickedInputLabelElement = '';
       let correctAnswerLabelElement = '';
-      let numberCorrectAnswers = 0;
 
       quizInputElements.forEach(input => {
         if (input.checked) {
+          studentData.userAnswer = input.value;
           userPickedInputLabelElement = input.parentNode.parentElement.parentElement.children[1];
         }
         if (input.value == quizCorrectAnswer) {
@@ -207,35 +229,34 @@ export const exam = (props) => {
       userPickedInputLabelElement.style = "color:red;font-weight:600";
       correctAnswerLabelElement.style = "color:green;font-weight:600";
 
-      let data = {
-        classId: getClassIdFromRoute(),
-        numberCorrectAnswers
-      }
-
-      let savedUserAnswer = await api.post('/classes/setAnsweredQuiz', data)
-        .then()
-        .catch(err => err);
-
-      return savedUserAnswer;
-      
+      studentResponses.push(studentData);
     }
+
+    let data = {
+      classId: getClassIdFromRoute(),
+      numberCorrectAnswers
+    }
+
+    api.post('/classes/setStudentResponses', studentResponses)
+      .then()
+      .catch(err => err);
+
+    let savedUserAnswer = await api.post('/classes/setAnsweredQuiz', data)
+      .then()
+      .catch(err => err);
+
+    return savedUserAnswer;
   }
 
   return (
     <HomeLayout>
       <>
-        <Head>
-          <title>Daca-ng - Courses</title>
-          <meta charSet="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta name="copyright" content={`Copyright © Daca-ng ${new Date().getFullYear()}`} />
-          <meta name="description" content="Online exam for preparatory Courses" />
-          <meta name="robots" content="Maturity Courses"></meta>
-          <link rel="icon" href="/favicon.ico" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" />
-          <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></link>
-          <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Yusei+Magic&display=swap" rel="stylesheet" />
-        </Head>
+      
+        <CustomHead 
+          iosApplicationTitle="Daca-ng Class Quiz"
+          title="Daca-ng - Class Quiz"
+          robots="Quizzes"
+        />
 
         <main className={styles.main}>
           <Container className={styles.headerContainer}>
