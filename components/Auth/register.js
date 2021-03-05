@@ -147,7 +147,7 @@ const Register = function({authLogin}) {
     let isStrongPassword = validators.isStrongPassword(id);
     if (isStrongPassword){
       setpassowrdError(isStrongPassword);
-      setpassowrdErrorMsg('password must have 1 lowercase, 1 uppercase, 1 special character and 8 characters long');
+      setpassowrdErrorMsg('password must have 1 lowercase, 1 uppercase and 5 characters long');
       return false;
     }
 

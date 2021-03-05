@@ -21,7 +21,7 @@ const validators = {
     if (element == null)
       return true;
     
-    let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/;
+    let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{5,}$/gm;
     return passwordRegex.test(element.value) == false ? true : false;
   },
   isSamePassword: (id, confId) => {
