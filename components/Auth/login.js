@@ -168,7 +168,6 @@ const Login = function(props) {
           title: 'error',
           text: res ? res.data.msg : 'An error occured',
           icon: 'error',
-          timer: 1500
         });
 
         setSignInText("SIGN IN");

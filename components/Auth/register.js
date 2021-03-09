@@ -212,10 +212,9 @@ const Register = function({authLogin}) {
   
         Swal.fire({
           title: 'success',
-          text: 'Successfully registered user',
+          text: 'User Successfully created, Please check your email to activate your account',
           icon: 'success',
-          confirmButtonText: 'Ok',
-          timer: 3000
+          confirmButtonText: 'Ok'
         }).then(() => {
           setSignUpButtonState(false);
           setSignUpText("SIGN UP");
