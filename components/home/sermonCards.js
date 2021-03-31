@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import cx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -20,7 +20,14 @@ import Watch from '@material-ui/icons/WatchLater';
 import Tooltip from '@material-ui/core/Tooltip';
 import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
+import Skeleton from 'react-loading-skeleton';
+import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
+import { useRouter } from 'next/router';
 
+import { getSermons } from '../../redux/actions/sermonActions'
+import { Button } from '@material-ui/core';
+const $primaryColor = '#6D0EB5';
 
 const useStyles = makeStyles(({breakpoints}) => ({
   root: {
@@ -149,6 +156,15 @@ const useStyles = makeStyles(({breakpoints}) => ({
   },
   avartar: {
     textAlign: 'center'
+  },
+  sermonButton:{
+    background: $primaryColor,
+    color: '#fff',
+    marginTop: '2rem',
+
+    '&:hover': {
+      background: $primaryColor
+    }
   }
 }));
 
@@ -156,243 +172,137 @@ export const SermonCards = React.memo(function NewsCard() {
   const styles = useStyles();
   const mediaStyles = useWideCardMediaStyles();
   const textCardContentStyles = useN01TextInfoContentStyles();
+  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const sermons = useSelector(state => state.sermonReducer.detailedSermons)
+    .sort((a, b) => b.id - a.id)
+    .slice(0, 3)
+    .map(sermon => sermon);
   
+  useEffect(() => {
+    dispatch(getSermons());
+  }, []);
+  
+  useEffect(() => {
+    if (sermons.length < 1)
+      setLoading(true);
+    else
+      setLoading(false);
+  }, [sermons]);
+
   return (
     <div className={styles.cards}>
-      <Grid container spacing={4}>
-        <Grid item sm={12} md={4} className={styles.grid}>
-          <Card className={cx(styles.root, styles.cardRoot)} >
-            <CardMedia classes={mediaStyles} className={styles.image}
-              image='/images/newWayOfLiving.jpg'
-            />
-            <CardContent className={styles.content}>
-              <div className={cx(styles.logo, 'avartar', styles.avartar)} >
-                <Typography variant="h5" className="avartar">
-                  13
-                </Typography>
-                <Typography variant="h6"  className="avartar">
-                  AUG
-                </Typography>
+      {
+        loading ? (
+          <Grid container spacing={4}>
+            <Grid item xs={12} sm={6} >
+              <Skeleton height='10rem' />
+              <div style={{marginTop:'1rem'}}>
+                <Skeleton count={4} height='2rem' />
               </div>
+            </Grid>
+            <Grid item xs={12} sm={6} >
+              <Skeleton height='10rem' />
+              <div style={{marginTop:'1rem'}}>
+                <Skeleton count={4} height='2rem' />
+              </div>
+            </Grid>
+          </Grid>
+        ) : 
+          <div style={{textAlign: 'center'}}>
+            <Grid container spacing={4}>
+              { 
+                sermons.map((sermon, i) => {
+                  let createdAt = moment(sermon.createdAt);
+                  return (
+                    <Grid item sm={12} md={4} className={styles.grid} key={i}>
+                      <Card className={cx(styles.root, styles.cardRoot)} >
+                        <CardMedia classes={mediaStyles} className={styles.image}
+                          image='/images/newWayOfLiving.jpg'
+                        />
+                        <CardContent className={styles.content}>
+                          <div className={cx(styles.logo, 'avartar', styles.avartar)} >
+                            <Typography variant="h5" className="avartar">
+                              {createdAt.date()}
+                            </Typography>
+                            <Typography variant="h6"  className="avartar">
+                              {createdAt.format('MMM')}
+                            </Typography>
+                          </div>
 
-              <div className={styles.icons}>
-                <Tooltip title="video" placement="top" aria-label="Video" className="toolIcon">
-                  <Icon>
-                    <VideocamRounded />
-                  </Icon>
-                </Tooltip>
-                <Tooltip title="Audio" placement="top" aria-label="Audio" className="toolIcon">
-                  <Icon>
-                    <HeadsetMicRounded />
-                  </Icon>
-                </Tooltip>
-                <Tooltip title="Docs" placement="top" aria-label="Docs" className="toolIcon">
-                  <Icon>
-                    <FileCopyRounded />
-                  </Icon>
-                </Tooltip>
-                <Tooltip title="Download" placement="top" aria-label="Download" className="toolIcon">
-                  <Icon>
-                    <CloudDownloadRounded />
-                  </Icon>
-                </Tooltip>
-              </div>
+                          <div className={styles.icons}>
+                            <Tooltip title="video" placement="top" aria-label="Video" className="toolIcon">
+                              <Icon>
+                                <VideocamRounded />
+                              </Icon>
+                            </Tooltip>
+                            <Tooltip title="Audio" placement="top" aria-label="Audio" className="toolIcon">
+                              <Icon>
+                                <HeadsetMicRounded />
+                              </Icon>
+                            </Tooltip>
+                            <Tooltip title="Docs" placement="top" aria-label="Docs" className="toolIcon">
+                              <Icon>
+                                <FileCopyRounded />
+                              </Icon>
+                            </Tooltip>
+                            <Tooltip title="Download" placement="top" aria-label="Download" className="toolIcon">
+                              <Icon>
+                                <CloudDownloadRounded />
+                              </Icon>
+                            </Tooltip>
+                          </div>
 
-              <div className={styles.title}>
-                <TextInfoContent
-                  classes={textCardContentStyles}
-                  heading={'Start a New Way of Living'}
-                />
-              </div>
-              
-              <Divider />
+                          <div className={styles.title}>
+                            <TextInfoContent
+                              classes={textCardContentStyles}
+                              heading={sermon.sermonTitle}
+                            />
+                          </div>
+                          
+                          <Divider />
 
-              <div className={styles.info}>
-                <div>
-                  <Icon>
-                    <Person />
-                  </Icon>
-                  <Typography variant="caption" className="pTitle">
-                    Sermon From: <span>Pst. Timothy Benedict</span>
-                  </Typography>
-                </div>
-                <div>
-                  <Icon>
-                    <Category />
-                  </Icon>
-                  <Typography variant="caption" className="pTitle">
-                    Category: <span>God, Pray</span>
-                  </Typography>
-                </div>
-                <div>
-                  <Icon>
-                    <Watch />
-                  </Icon>
-                  <Typography variant="caption" className="pTitle">
-                    August 10 0n: <span>9:00 am - 11:00 am</span>
-                  </Typography>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item sm={12} md={4} className={styles.grid}>
-          <Card className={cx(styles.root, styles.cardRoot)} >
-            <CardMedia
-              classes={mediaStyles}
-              className={styles.image}
-              image='/images/toBeSaved.jpg'
-            />
-            <CardContent className={styles.content}>
-            <div className={cx(styles.logo, 'avartar', styles.avartar)} >
-                <Typography variant="h5" className="avartar">
-                  15
-                </Typography>
-                <Typography variant="h6"  className="avartar">
-                  AUG
-                </Typography>
-              </div>
-
-              <div className={styles.icons}>
-                <Tooltip title="video" placement="top" aria-label="Video" className="toolIcon">
-                  <Icon>
-                    <VideocamRounded />
-                  </Icon>
-                </Tooltip>
-                <Tooltip title="Audio" placement="top" aria-label="Audio" className="toolIcon">
-                  <Icon>
-                    <HeadsetMicRounded />
-                  </Icon>
-                </Tooltip>
-                <Tooltip title="Docs" placement="top" aria-label="Docs" className="toolIcon">
-                  <Icon>
-                    <FileCopyRounded />
-                  </Icon>
-                </Tooltip>
-                <Tooltip title="Download" placement="top" aria-label="Download" className="toolIcon">
-                  <Icon>
-                    <CloudDownloadRounded />
-                  </Icon>
-                </Tooltip>
-              </div>
-
-              <div className={styles.title}>
-                <TextInfoContent
-                  classes={textCardContentStyles}
-                  heading={'What Must I do to be Saved'}
-                />
-              </div>
-              
-              <Divider />
-
-              <div className={styles.info}>
-                <div>
-                  <Icon>
-                    <Person />
-                  </Icon>
-                  <Typography variant="caption" className="pTitle">
-                    Sermon From: <span>Pst. Lilian Benedict</span>
-                  </Typography>
-                </div>
-                <div>
-                  <Icon>
-                    <Category />
-                  </Icon>
-                  <Typography variant="caption" className="pTitle">
-                    Category: <span>God, Pray</span>
-                  </Typography>
-                </div>
-                <div>
-                  <Icon>
-                    <Watch />
-                  </Icon>
-                  <Typography variant="caption" className="pTitle">
-                    August 15 0n: <span>10:00 am - 05:00 pm</span>
-                  </Typography>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item sm={12} md={4} className={styles.grid}>
-          <Card className={cx(styles.root, styles.cardRoot)} >
-            <CardMedia
-              classes={mediaStyles}
-              className={styles.image}
-              image='/images/theSecondComing.jpg'
-            />
-            <CardContent className={styles.content}>
-            <div className={cx(styles.logo, 'avartar', styles.avartar)} >
-                <Typography variant="h5" className="avartar">
-                  30
-                </Typography>
-                <Typography variant="h6"  className="avartar">
-                  AUG
-                </Typography>
-              </div>
-
-              <div className={styles.icons}>
-                <Tooltip title="video" placement="top" aria-label="Video" className="toolIcon">
-                  <Icon>
-                    <VideocamRounded />
-                  </Icon>
-                </Tooltip>
-                <Tooltip title="Audio" placement="top" aria-label="Audio" className="toolIcon">
-                  <Icon>
-                    <HeadsetMicRounded />
-                  </Icon>
-                </Tooltip>
-                <Tooltip title="Docs" placement="top" aria-label="Docs" className="toolIcon">
-                  <Icon>
-                    <FileCopyRounded />
-                  </Icon>
-                </Tooltip>
-                <Tooltip title="Download" placement="top" aria-label="Download" className="toolIcon">
-                  <Icon>
-                    <CloudDownloadRounded />
-                  </Icon>
-                </Tooltip>
-              </div>
-
-              <div className={styles.title}>
-                <TextInfoContent
-                  classes={textCardContentStyles}
-                  heading={'The Second Coming of Christ'}
-                />
-              </div>
-              
-              <Divider />
-
-              <div className={styles.info}>
-                <div>
-                  <Icon>
-                    <Person />
-                  </Icon>
-                  <Typography variant="caption" className="pTitle">
-                    Sermon From: <span>Pst. Chigozie Onuoha</span>
-                  </Typography>
-                </div>
-                <div>
-                  <Icon>
-                    <Category />
-                  </Icon>
-                  <Typography variant="caption" className="pTitle">
-                    Category: <span>God, Pray</span>
-                  </Typography>
-                </div>
-                <div>
-                  <Icon>
-                    <Watch />
-                  </Icon>
-                  <Typography variant="caption" className="pTitle">
-                    August 30 0n: <span>12:00 pm - 04:00 pm</span>
-                  </Typography>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+                          <div className={styles.info}>
+                            <div>
+                              <Icon>
+                                <Person />
+                              </Icon>
+                              <Typography variant="caption" className="pTitle">
+                                Sermon From: <span>{sermon.sermonPreacher}</span>
+                              </Typography>
+                            </div>
+                            <div>
+                              <Icon>
+                                <Category />
+                              </Icon>
+                              <Typography variant="caption" className="pTitle">
+                                Category: <span>{sermon.category}</span>
+                              </Typography>
+                            </div>
+                            <div>
+                              <Icon>
+                                <Watch />
+                              </Icon>
+                              <Typography variant="caption" className="pTitle">
+                                {createdAt.format('MMM DD')} 0n:
+                                <span>{`${createdAt.format('HH')}:00 ${createdAt.format('HH') < 12 ? 'am' : 'pm'}`}</span>
+                              </Typography>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  )
+                })
+              }
+            </Grid>
+            <Button variant="contained" onClick={() => router.push('/sermons')} className={styles.sermonButton} >
+              All Sermons
+            </Button>
+          </div>
+      }
     </div>
     
   );

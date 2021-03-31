@@ -14,6 +14,14 @@ const settings = {
         destination: "/aboutus"
       },
       {
+        source: "/Event", 
+        destination: "/events"
+      },
+      {
+        source: "/Sermon", 
+        destination: "/sermons"
+      },
+      {
         source: "/Courses", 
         destination: "/courses"
       },

@@ -1,5 +1,6 @@
 import React from 'react'
 import Head from 'next/head';
+import PropTypes from "prop-types";
 
 function head(props) {
 
@@ -58,6 +59,12 @@ function head(props) {
       <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"></link>
     </Head>
   )
+}
+
+head.propTypes = {
+  iosApplicationTitle: PropTypes.string,
+  title: PropTypes.string,
+  robot: PropTypes.string,
 }
 
 export default head;

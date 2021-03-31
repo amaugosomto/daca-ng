@@ -26,6 +26,7 @@ import { Container } from '@material-ui/core';
 import { useRouter } from 'next/router';
 
 import {reintialiseAdminState, isAdminUserLoggedIn} from '../../redux/actions/adminActions';
+import { AccessTime, PlayCircleFilledRounded } from '@material-ui/icons';
 
 const $primaryColor = '#6D0EB5';
 
@@ -204,6 +205,18 @@ function Dashboard({ children, ...pageProps }) {
                 <LibraryBooksIcon  style={{color: $primaryColor}} />
               </ListItemIcon>
               <ListItemText primary="Classes" />
+            </ListItem>  
+            <ListItem button onClick={() => router.push('/admin/sermons')}>
+              <ListItemIcon>
+                <PlayCircleFilledRounded  style={{color: $primaryColor}} />
+              </ListItemIcon>
+              <ListItemText primary="Sermons" />
+            </ListItem>  
+            <ListItem button onClick={() => router.push('/admin/events')}>
+              <ListItemIcon>
+                <AccessTime  style={{color: $primaryColor}} />
+              </ListItemIcon>
+              <ListItemText primary="Events" />
             </ListItem>  
           </List>
         <Divider />

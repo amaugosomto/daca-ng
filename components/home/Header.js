@@ -173,7 +173,7 @@ const PrimarySearchAppBar = function (props) {
         </Link>
       </MenuItem>
       <MenuItem>
-        <Link href="/" 
+        <Link href="/aboutus" 
           className={cx(classes.button, 
             isActive('/aboutus') ? classes.active : '',
             isClassRoom() ? classes.hide : '')}>
@@ -181,20 +181,20 @@ const PrimarySearchAppBar = function (props) {
         </Link>
       </MenuItem>
       <MenuItem>
-        <Link href="/" 
+        <Link href="/events" 
           className={cx(classes.button, isActive('/events') ? classes.active : '',
             isClassRoom() ? classes.hide : '')}>
           <a>Events</a>
         </Link>
       </MenuItem>
       <MenuItem>
-        <Link href="/" 
-          className={cx(classes.button, isActive('/download') ? classes.active : '',
+        <Link href="/sermons" 
+          className={cx(classes.button, isActive('/sermons') ? classes.active : '',
             isClassRoom() ? classes.hide : '')}>
-          <a>Downloads</a>
+          <a>Sermons</a>
         </Link>
       </MenuItem>
-      <MenuItem>
+      {/* <MenuItem>
         <Link href="/" 
           className={cx(classes.button, isActive('/store') ? classes.active : '',
             isClassRoom() ? classes.hide : '')}>
@@ -207,7 +207,7 @@ const PrimarySearchAppBar = function (props) {
             isClassRoom() ? classes.hide : '')}>
           <a>Contact Us</a>
         </Link>
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem>
         <Link href="/Courses" 
           className={cx(classes.button, isActive('/Courses') ? classes.active : '')}>
@@ -262,23 +262,23 @@ const PrimarySearchAppBar = function (props) {
             <Button size="small" 
               className={cx(classes.button, isActive('/aboutus') ? classes.active : '',
                 isClassRoom() ? classes.hide : '')}>
-              <Link href="/">
+              <Link href="/aboutus">
                 <a>About Us</a>
               </Link>
             </Button>
             <Button size="small" 
               className={cx(classes.button, isActive('/events') ? classes.active : '',
                 isClassRoom() ? classes.hide : '')}>
-              <Link href="/">
+              <Link href="/events">
                 <a>Events</a>
               </Link></Button>
             <Button size="small" 
-              className={cx(classes.button, isActive('/download') ? classes.active : '',
+              className={cx(classes.button, isActive('/sermons') ? classes.active : '',
                 isClassRoom() ? classes.hide : '')}>
-              <Link href="/">
-                <a>Downloads</a>
+              <Link href="/sermons">
+                <a>Sermons</a>
               </Link></Button>
-            <Button size="small" 
+            {/* <Button size="small" 
               className={cx(classes.button, isActive('/store') ? classes.active : '',
                 isClassRoom() ? classes.hide : '')}>
               <Link href="/">
@@ -290,7 +290,7 @@ const PrimarySearchAppBar = function (props) {
               <Link href="/">
                 <a>Contact Us</a>
               </Link>
-            </Button>
+            </Button> */}
             <Button size="small" className={cx(classes.button, isActive('/Courses') ? classes.active : '')} color="inherit">
               <Link href="/Courses">
                 <a>Courses</a>
@@ -315,10 +315,10 @@ const PrimarySearchAppBar = function (props) {
                 </Link>
               </Button>
             }
-            
+{/*             
             <IconButton aria-label="show 4 new mails" color="inherit">
               <SearchIcon />
-            </IconButton>
+            </IconButton> */}
             <Button variant="contained" className={classes.donateBtn}>
               Donate
             </Button>

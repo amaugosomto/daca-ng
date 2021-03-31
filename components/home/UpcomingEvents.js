@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import Container from '@material-ui/core/Container';
 import TextInfoContent from '@mui-treasury/components/content/textInfo';
@@ -9,9 +9,15 @@ import Grid from '@material-ui/core/Grid';
 import { Button } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import cx from 'clsx';
+import { useDispatch, useSelector } from 'react-redux';
+import { getEvents } from '../../redux/actions/eventActions';
+import moment from 'moment';
+
+import EventDialog from '../../components/home/eventDialog';
 
 const $primaryColor = '#6D0EB5';
 const $lightGrey = '#636363';
+
 const useStyles = makeStyles(({breakpoints}) => ({
   control: {
     marginTop: '4rem',
@@ -216,6 +222,9 @@ const useStyles = makeStyles(({breakpoints}) => ({
 
 function WithExternalControlsv2() {
   let [currentSlide, setCurrentSlide] = useState(0);
+  let [open, setOpen] = useState(false);
+  let [eventId, setEventId] = useState(0);
+  const dispatch = useDispatch();
 
   const updateCurrentSlide = (index) => {
     let currentSlide = currentSlide;
@@ -225,7 +234,111 @@ function WithExternalControlsv2() {
     }
   }
 
+  function handleClose() {
+    setOpen(false);
+    setEventId(0);
+  }
+
+  function handleOpen(eventId) {
+    setEventId(eventId);
+    setOpen(true);
+  }
+
   const styles = useStyles();
+
+  useEffect(() => {
+    dispatch(getEvents());
+  }, []);
+
+  const events = useSelector(state => state.eventReducer.detailedEvents);
+  const [carouselItems, setCorouselItems] = useState([]);
+
+  useEffect(() => {
+    if (events.length > 0) {
+      let newArray = [];
+      
+      let domain = location.hostname.toLowerCase().includes('localhost') ? 
+        'http://localhost:5000': 'https://api.daca.org.ng';
+  
+      let number = 3;
+      let lastNumber = 0;
+      let condition = 0;
+      let i = 0;
+  
+      while (condition < 1) {
+        let newEvents = events.slice(lastNumber, number);
+  
+        newArray.push(
+          <div key={i}>
+            {
+              newEvents.map((event, z) => {
+                return (
+                  <div className={styles.carouselItem} key={z}>
+                    <Grid container spacing={3}>
+                      <Grid item xs={12} md={3}>
+                        <img src={ `${domain}/${event.eventFileName.replace("\\", "/")}` } />
+                      </Grid>
+                      <Grid item xs={12} md={9} className="body">
+                        <div>
+                          <Typography variant="h5">
+                            { event.eventTitle }
+                          </Typography>
+                          <div className="icons">
+                            <span>
+                              <DateRange />
+                              <Typography variant="caption">
+                                { moment(event.eventDate).format("MMMM do, yyyy") }
+                              </Typography>
+                            </span>
+                            <span>
+                              <WatchLater />
+                              <Typography variant="caption">
+                              { moment(event.eventDate).format("HH:MM") }
+                              </Typography>
+                            </span>
+                            <span>
+                              <LocationOn />
+                              <Typography variant="caption">
+                              { event.eventVenue }
+                              </Typography>
+                            </span>
+                          </div>
+                        </div>
+                        <div className="caption">
+                          <Typography variant="caption">
+                            { event.eventDesc }
+                          </Typography>
+                        </div>
+                        <div>
+                          <Button variant="text" onClick={() => handleOpen(event.id)}>
+                            Read More
+                            <DoubleArrow />
+                          </Button>
+                        </div>
+                      </Grid>
+                    </Grid>
+                  </div>
+                )
+              })
+            }
+            
+          </div>
+        );
+        
+        if (number > events.length - 1){
+          ++condition;
+          continue;
+        }
+  
+        lastNumber = number;
+        number += 3;
+        i++;
+  
+      }
+  
+      setCorouselItems(newArray)
+    }
+  }, [events]);
 
   return (
     <div>
@@ -247,465 +360,11 @@ function WithExternalControlsv2() {
       <Container>
         <Carousel transitionTime={1000} interval={4000} infiniteLoop selectedItem={currentSlide} onChange={updateCurrentSlide} className={styles.carousel} stopOnHover={true}
           showThumbs={false} showStatus={false} showArrows={false} showIndicators={false} className={cx(styles.grid, 'upcomingCarousel')}>
-          <div>
-            <div className={styles.carouselItem}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={3}>
-                  <img src="/images/DACA-2.jpg" />
-                </Grid>
-                <Grid item xs={12} md={7} className="body">
-                  <div>
-                    <Typography variant="h5">
-                      Seeing and Savoring Christ
-                    </Typography>
-                    <div className="icons">
-                      <span>
-                        <DateRange />
-                        <Typography variant="caption">
-                          March 01, 2020
-                        </Typography>
-                      </span>
-                      <span>
-                        <WatchLater />
-                        <Typography variant="caption">
-                          10:00 - 11:00
-                        </Typography>
-                      </span>
-                      <span>
-                        <LocationOn />
-                        <Typography variant="caption">
-                          210 Okigwe Road
-                        </Typography>
-                      </span>
-                    </div>
-                  </div>
-                  <div className="caption">
-                    <Typography variant="caption">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt ea, possimus sapiente voluptatum esse sequi consequatur beatae. Deleniti, eos quas?
-                    </Typography>
-                  </div>
-                  <div>
-                    <Button variant="text">
-                      Read More
-                      <DoubleArrow />
-                    </Button>
-                  </div>
-                </Grid>
-                <Grid item xs={12} md={2} className="findMore">
-                  <Button variant="contained">
-                    Find Out More
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
-            <div className={styles.carouselItem}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={3}>
-                  <img src="/images/DACA-4.jpg" />
-                </Grid>
-                <Grid item xs={12} md={7} className="body">
-                  <div>
-                    <Typography variant="h5">
-                      A God-Entranced Vision of All Things
-                    </Typography>
-                    <div className="icons">
-                      <span>
-                        <DateRange />
-                        <Typography variant="caption">
-                          March 15, 2020
-                        </Typography>
-                      </span>
-                      <span>
-                        <WatchLater />
-                        <Typography variant="caption">
-                          12:00 - 04:00
-                        </Typography>
-                      </span>
-                      <span>
-                        <LocationOn />
-                        <Typography variant="caption">
-                          210 Okigwe Road
-                        </Typography>
-                      </span>
-                    </div>
-                  </div>
-                  <div className="caption">
-                    <Typography variant="caption">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt ea, possimus sapiente voluptatum esse sequi consequatur beatae. Deleniti, eos quas?
-                    </Typography>
-                  </div>
-                  <div>
-                    <Button variant="text">
-                      Read More
-                      <DoubleArrow />
-                    </Button>
-                  </div>
-                </Grid>
-                <Grid item xs={12} md={2} className="findMore">
-                  <Button variant="contained">
-                    Find Out More
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
-            <div className={styles.carouselItem}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={3}>
-                  <img src="/images/DACA-6.jpg" />
-                </Grid>
-                <Grid item xs={12} md={7} className="body">
-                  <div>
-                    <Typography variant="h5">
-                      A Holy Spirit Filled Life
-                    </Typography>
-                    <div className="icons">
-                      <span>
-                        <DateRange />
-                        <Typography variant="caption">
-                          March 01, 2018
-                        </Typography>
-                      </span>
-                      <span>
-                        <WatchLater />
-                        <Typography variant="caption">
-                          10:00 - 11:00
-                        </Typography>
-                      </span>
-                      <span>
-                        <LocationOn />
-                        <Typography variant="caption">
-                          210 Okigwe Road
-                        </Typography>
-                      </span>
-                    </div>
-                  </div>
-                  <div className="caption">
-                    <Typography variant="caption">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt ea, possimus sapiente voluptatum esse sequi consequatur beatae. Deleniti, eos quas?
-                    </Typography>
-                  </div>
-                  <div>
-                    <Button variant="text">
-                      Read More
-                      <DoubleArrow />
-                    </Button>
-                  </div>
-                </Grid>
-                <Grid item xs={12} md={2} className="findMore">
-                  <Button variant="contained">
-                    Find Out More
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
-          </div>
-          <div>
-            <div className={styles.carouselItem}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={3}>
-                  <img src="/images/DACA-2.jpg" />
-                </Grid>
-                <Grid item xs={12} md={7} className="body">
-                  <div>
-                    <Typography variant="h5">
-                      Seeing and Savoring Christ
-                    </Typography>
-                    <div className="icons">
-                      <span>
-                        <DateRange />
-                        <Typography variant="caption">
-                          March 01, 2020
-                        </Typography>
-                      </span>
-                      <span>
-                        <WatchLater />
-                        <Typography variant="caption">
-                          10:00 - 11:00
-                        </Typography>
-                      </span>
-                      <span>
-                        <LocationOn />
-                        <Typography variant="caption">
-                          210 Okigwe Road
-                        </Typography>
-                      </span>
-                    </div>
-                  </div>
-                  <div className="caption">
-                    <Typography variant="caption">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt ea, possimus sapiente voluptatum esse sequi consequatur beatae. Deleniti, eos quas?
-                    </Typography>
-                  </div>
-                  <div>
-                    <Button variant="text">
-                      Read More
-                      <DoubleArrow />
-                    </Button>
-                  </div>
-                </Grid>
-                <Grid item xs={12} md={2} className="findMore">
-                  <Button variant="contained">
-                    Find Out More
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
-            <div className={styles.carouselItem}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={3}>
-                  <img src="/images/DACA-4.jpg" />
-                </Grid>
-                <Grid item xs={12} md={7} className="body">
-                  <div>
-                    <Typography variant="h5">
-                      A God-Entranced Vision of All Things
-                    </Typography>
-                    <div className="icons">
-                      <span>
-                        <DateRange />
-                        <Typography variant="caption">
-                          March 15, 2020
-                        </Typography>
-                      </span>
-                      <span>
-                        <WatchLater />
-                        <Typography variant="caption">
-                          12:00 - 04:00
-                        </Typography>
-                      </span>
-                      <span>
-                        <LocationOn />
-                        <Typography variant="caption">
-                          210 Okigwe Road
-                        </Typography>
-                      </span>
-                    </div>
-                  </div>
-                  <div className="caption">
-                    <Typography variant="caption">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt ea, possimus sapiente voluptatum esse sequi consequatur beatae. Deleniti, eos quas?
-                    </Typography>
-                  </div>
-                  <div>
-                    <Button variant="text">
-                      Read More
-                      <DoubleArrow />
-                    </Button>
-                  </div>
-                </Grid>
-                <Grid item xs={12} md={2} className="findMore">
-                  <Button variant="contained">
-                    Find Out More
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
-            <div className={styles.carouselItem}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={3}>
-                  <img src="/images/DACA-6.jpg" />
-                </Grid>
-                <Grid item xs={12} md={7} className="body">
-                  <div>
-                    <Typography variant="h5">
-                      A Holy Spirit Filled Life
-                    </Typography>
-                    <div className="icons">
-                      <span>
-                        <DateRange />
-                        <Typography variant="caption">
-                          March 01, 2018
-                        </Typography>
-                      </span>
-                      <span>
-                        <WatchLater />
-                        <Typography variant="caption">
-                          10:00 - 11:00
-                        </Typography>
-                      </span>
-                      <span>
-                        <LocationOn />
-                        <Typography variant="caption">
-                          210 Okigwe Road
-                        </Typography>
-                      </span>
-                    </div>
-                  </div>
-                  <div className="caption">
-                    <Typography variant="caption">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt ea, possimus sapiente voluptatum esse sequi consequatur beatae. Deleniti, eos quas?
-                    </Typography>
-                  </div>
-                  <div>
-                    <Button variant="text">
-                      Read More
-                      <DoubleArrow />
-                    </Button>
-                  </div>
-                </Grid>
-                <Grid item xs={12} md={2} className="findMore">
-                  <Button variant="contained">
-                    Find Out More
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
-          </div>
-          <div>
-            <div className={styles.carouselItem}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={3}>
-                  <img src="/images/DACA-2.jpg" />
-                </Grid>
-                <Grid item xs={12} md={7} className="body">
-                  <div>
-                    <Typography variant="h5">
-                      Seeing and Savoring Christ
-                    </Typography>
-                    <div className="icons">
-                      <span>
-                        <DateRange />
-                        <Typography variant="caption">
-                          March 01, 2020
-                        </Typography>
-                      </span>
-                      <span>
-                        <WatchLater />
-                        <Typography variant="caption">
-                          10:00 - 11:00
-                        </Typography>
-                      </span>
-                      <span>
-                        <LocationOn />
-                        <Typography variant="caption">
-                          210 Okigwe Road
-                        </Typography>
-                      </span>
-                    </div>
-                  </div>
-                  <div className="caption">
-                    <Typography variant="caption">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt ea, possimus sapiente voluptatum esse sequi consequatur beatae. Deleniti, eos quas?
-                    </Typography>
-                  </div>
-                  <div>
-                    <Button variant="text">
-                      Read More
-                      <DoubleArrow />
-                    </Button>
-                  </div>
-                </Grid>
-                <Grid item xs={12} md={2} className="findMore">
-                  <Button variant="contained">
-                    Find Out More
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
-            <div className={styles.carouselItem}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={3}>
-                  <img src="/images/DACA-4.jpg" />
-                </Grid>
-                <Grid item xs={12} md={7} className="body">
-                  <div>
-                    <Typography variant="h5">
-                      A God-Entranced Vision of All Things
-                    </Typography>
-                    <div className="icons">
-                      <span>
-                        <DateRange />
-                        <Typography variant="caption">
-                          March 15, 2020
-                        </Typography>
-                      </span>
-                      <span>
-                        <WatchLater />
-                        <Typography variant="caption">
-                          12:00 - 04:00
-                        </Typography>
-                      </span>
-                      <span>
-                        <LocationOn />
-                        <Typography variant="caption">
-                          210 Okigwe Road
-                        </Typography>
-                      </span>
-                    </div>
-                  </div>
-                  <div className="caption">
-                    <Typography variant="caption">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt ea, possimus sapiente voluptatum esse sequi consequatur beatae. Deleniti, eos quas?
-                    </Typography>
-                  </div>
-                  <div>
-                    <Button variant="text">
-                      Read More
-                      <DoubleArrow />
-                    </Button>
-                  </div>
-                </Grid>
-                <Grid item xs={12} md={2} className="findMore">
-                  <Button variant="contained">
-                    Find Out More
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
-            <div className={styles.carouselItem}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={3}>
-                  <img src="/images/DACA-6.jpg" />
-                </Grid>
-                <Grid item xs={12} md={7} className="body">
-                  <div>
-                    <Typography variant="h5">
-                      A Holy Spirit Filled Life
-                    </Typography>
-                    <div className="icons">
-                      <span>
-                        <DateRange />
-                        <Typography variant="caption">
-                          March 01, 2018
-                        </Typography>
-                      </span>
-                      <span>
-                        <WatchLater />
-                        <Typography variant="caption">
-                          10:00 - 11:00
-                        </Typography>
-                      </span>
-                      <span>
-                        <LocationOn />
-                        <Typography variant="caption">
-                          210 Okigwe Road
-                        </Typography>
-                      </span>
-                    </div>
-                  </div>
-                  <div className="caption">
-                    <Typography variant="caption">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt ea, possimus sapiente voluptatum esse sequi consequatur beatae. Deleniti, eos quas?
-                    </Typography>
-                  </div>
-                  <div>
-                    <Button variant="text">
-                      Read More
-                      <DoubleArrow />
-                    </Button>
-                  </div>
-                </Grid>
-                <Grid item xs={12} md={2} className="findMore">
-                  <Button variant="contained">
-                    Find Out More
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
-          </div>
+          {carouselItems}
         </Carousel>
       </Container>
       
+      <EventDialog handleClose={handleClose} open={open} eventId={eventId} />
     </div>
   );
 

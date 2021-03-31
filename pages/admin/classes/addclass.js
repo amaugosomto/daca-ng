@@ -88,7 +88,7 @@ export const addclass = (props) => {
         title: 'error',
         text: 'please select only images with extentions of png, jpeg, jpg and webp',
         icon: 'error',
-        timer: 1500
+        showCloseButton: true
       });
 
       return;
