@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import HomeLayout from '../components/home/HomeLayout';
 import CustomHead from '../components/HEAD/head'
 
-import { Container, Grid, Typography, createMuiTheme, ThemeProvider, Divider, IconButton, Button } from '@material-ui/core';
-import purple from '@material-ui/core/colors/purple';
-import AudioPlayer from 'material-ui-audio-player';
+import { Container, Grid, Typography, Divider, IconButton} from '@material-ui/core';
+import ReactPlayer from 'react-player';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -90,13 +89,13 @@ const useStyles = makeStyles((theme) => ({
     backgroundImage: 'linear-gradient(rgba(255,227,177, .5), #fff)',
     paddingTop: '1rem'
   },
-  audio: {
-    width: '100%',
-    padding: '1rem',
-    '& svg:hover': {
-      color: purple[500]
-    }
-  },
+  // audio: {
+  //   width: '100%',
+  //   padding: '1rem',
+  //   '& svg:hover': {
+  //     color: purple[500]
+  //   }
+  // },
   controls: {
     display: 'flex',
     alignItems: 'center',
@@ -127,6 +126,17 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       background: $primaryColor
     }
+  },
+  sermonAudioPlayer: {
+    '& div': {
+      width: '100% !important',
+      height: '100px !important'
+    }
+  },
+  sermonVideoPlayer: {
+    '& div': {
+      width: '100% !important',
+    }
   }
 }));
 
@@ -150,22 +160,60 @@ function sermon() {
   });
 
   const [loading, setLoading] = useState(true);
+  const [isAudio, setIsAudio] = useState(true);
 
   React.useEffect(() => {
     window.scrollTo(0,0);
     dispatch(getSermons());
-
   }, []);
 
-  React.useEffect(() => {
-    if (sermons.length < 1)
-      setLoading(true);
-    else{
-      setLoading(false);
-      let sermon = {...sermons[0]};
-      sermon.sermonFileName = `${domain}/${sermon.sermonFileName}`;
+  const getSermonIdFromRoute = () => {
+    let searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.has("id")) {
+      let search = location.search;
+      let sermonId = search.replace("?id=", '');
+      
+      return sermonId
+    }
+    return false;
+  }
 
+  function fileIsAudio (sermonFileName) {
+    const audioExtensions = ["wav", "mp3", "m3u"];
+    
+    let lastDot = sermonFileName.split("uploads")[1].lastIndexOf('.');
+    let extention = sermonFileName.split("uploads")[1].substring(lastDot + 1).toLowerCase();
+    let isValidAudioExtension = audioExtensions.find(audio => audio == extention);
+
+    return isValidAudioExtension ? true: false;
+  }
+  
+  React.useEffect(() => {
+    
+    if (sermons.length < 1) {
+      setLoading(true);
+    }
+    else{
+
+      let sermonId = getSermonIdFromRoute();
+      let sermon = "";
+
+      if (!sermonId) {
+        sermon = {...sermons[0]};
+      } else {
+        let sermonToPlay = sermons.find(sermon => sermon.id == sermonId);
+  
+        if (sermonToPlay == undefined)
+          sermon = {...sermons[0]};
+        else 
+          sermon = {...sermonToPlay};
+
+      }
+
+      sermon.sermonFileName = `${domain}/${sermon.sermonFileName}`;
+      setIsAudio(fileIsAudio(sermon.sermonFileName) ? true : false);
       setCurrentSermon(sermon);
+      setLoading(false);
     }
   }, [sermons]);
 
@@ -174,6 +222,7 @@ function sermon() {
 
     if (sermon != undefined){
       sermon.sermonFileName = `${domain}/${sermon.sermonFileName}`;
+      setIsAudio(fileIsAudio(sermon.sermonFileName) ? true : false);
       setCurrentSermon(sermon);
     }
   }
@@ -209,35 +258,37 @@ function sermon() {
                     <Skeleton height="2rem" />
                     <Skeleton height="2rem" />
                   </> :
-                  <Card className={classes.root}>
-                    <div className={classes.details}>
-                      <div className={classes.controls}>
-                        <div className={classes.audio}>
-                          <AudioPlayer 
-                            src={currentSermon.sermonFileName} 
-                            className={classes.audio}
-                            elevation={0}
-                            rounded={true}
-                            download={true}
-                          />
-                        </div>
-                      </div>
-                      <Divider />
-                      <CardContent className={classes.content}>
-                        <Typography component="h5" variant="h5">
-                          {currentSermon.sermonTitle} 
-                        </Typography>
-                        <Typography variant="subtitle1" color="textSecondary">
-                          {currentSermon.sermonPreacher} 
-                        </Typography>
-                      </CardContent>
+                  <div>
+                    <div className={isAudio ? classes.sermonAudioPlayer : classes.sermonVideoPlayer} style={{marginTop: '2rem'}}>
+                      <ReactPlayer 
+                        url={currentSermon.sermonFileName}
+                        controls={true}
+                      />
                     </div>
-                    <CardMedia
-                      className={classes.cover}
-                      image="/images/sermon.jpg"
-                      title="Live from space album cover"
-                    />
-                  </Card>
+
+                    <Card className={classes.root}>
+                      <div className={classes.details}>
+                        <div className={classes.controls}>
+                          <div className={classes.audio}>
+                          </div>
+                        </div>
+                        <Divider />
+                        <CardContent className={classes.content}>
+                          <Typography component="h5" variant="h5">
+                            {currentSermon.sermonTitle} 
+                          </Typography>
+                          <Typography variant="subtitle1" color="textSecondary">
+                            {currentSermon.sermonPreacher} 
+                          </Typography>
+                        </CardContent>
+                      </div>
+                      <CardMedia
+                        className={classes.cover}
+                        image="/images/sermon.jpg"
+                        title="Live from space album cover"
+                      />
+                    </Card>
+                  </div>
               }
             </Grid>
 
@@ -278,7 +329,7 @@ function sermon() {
                                   </Typography>
                                   <div className={classes.sermonFooter} >
                                     <Typography variant="subtitle1" color="textSecondary">
-                                      {createdAt.format('dddd, MMMM Do YYYY')} BY :
+                                      {createdAt.format('dddd, MMMM Do YYYY')} on :
                                         <span>{` ${createdAt.format('HH')}:00 ${createdAt.format('HH') < 12 ? 'am' : 'pm'}`}</span>
                                     </Typography>
                                     <a 
@@ -287,8 +338,8 @@ function sermon() {
                                       href={`${domain}/${sermon.sermonFileName}`} 
                                       download
                                     >
-                                      <span class="MuiButton-label">download sermon</span>
-                                      <span class="MuiTouchRipple-root"></span>
+                                      <span className="MuiButton-label">download sermon</span>
+                                      <span className="MuiTouchRipple-root"></span>
                                     </a>
                                   </div>
                                 </CardContent>

@@ -244,7 +244,7 @@ const PrimarySearchAppBar = function (props) {
   return (
     <div className={classes.grow}>
       <AppBar position="fixed" color="default">
-        <Toolbar>
+        <Toolbar style={{padding: '0 2rem'}}>
           <Typography className={classes.title} variant="h6" noWrap>
             <Link href="/">
               <img src="/images/daca-logo.png" className={classes.image} alt="daca logo"/>

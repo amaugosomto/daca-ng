@@ -12,8 +12,6 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import VideocamRounded from '@material-ui/icons/VideocamRounded';
 import HeadsetMicRounded from '@material-ui/icons/HeadsetMicRounded';
-import FileCopyRounded from '@material-ui/icons/FileCopyRounded'
-import CloudDownloadRounded from '@material-ui/icons/CloudDownloadRounded';
 import Person from '@material-ui/icons/Person';
 import Category from '@material-ui/icons/Category';
 import Watch from '@material-ui/icons/WatchLater';
@@ -26,7 +24,7 @@ import moment from 'moment';
 import { useRouter } from 'next/router';
 
 import { getSermons } from '../../redux/actions/sermonActions'
-import { Button } from '@material-ui/core';
+import { Button, IconButton } from '@material-ui/core';
 const $primaryColor = '#6D0EB5';
 
 const useStyles = makeStyles(({breakpoints}) => ({
@@ -180,6 +178,16 @@ export const SermonCards = React.memo(function NewsCard() {
     .sort((a, b) => b.id - a.id)
     .slice(0, 3)
     .map(sermon => sermon);
+
+  function isAudio (sermonFileName) {
+    const audioExtensions = ["wav", "mp3", "m3u"];
+    
+    let lastDot = sermonFileName.split("uploads")[1].lastIndexOf('.');
+    let extention = sermonFileName.split("uploads")[1].substring(lastDot + 1).toLowerCase();
+    let isValidAudioExtension = audioExtensions.find(audio => audio == extention);
+
+    return isValidAudioExtension ? true: false;
+  }
   
   useEffect(() => {
     dispatch(getSermons());
@@ -220,7 +228,7 @@ export const SermonCards = React.memo(function NewsCard() {
                     <Grid item sm={12} md={4} className={styles.grid} key={i}>
                       <Card className={cx(styles.root, styles.cardRoot)} >
                         <CardMedia classes={mediaStyles} className={styles.image}
-                          image='/images/newWayOfLiving.jpg'
+                          image='/images/DEVELOPING-A-WINNING-CHARACTER-WITH-TIMOTHY-C-BENEDICT_01-mp3-image-600x600.jpg'
                         />
                         <CardContent className={styles.content}>
                           <div className={cx(styles.logo, 'avartar', styles.avartar)} >
@@ -233,26 +241,20 @@ export const SermonCards = React.memo(function NewsCard() {
                           </div>
 
                           <div className={styles.icons}>
-                            <Tooltip title="video" placement="top" aria-label="Video" className="toolIcon">
-                              <Icon>
-                                <VideocamRounded />
-                              </Icon>
-                            </Tooltip>
-                            <Tooltip title="Audio" placement="top" aria-label="Audio" className="toolIcon">
-                              <Icon>
-                                <HeadsetMicRounded />
-                              </Icon>
-                            </Tooltip>
-                            <Tooltip title="Docs" placement="top" aria-label="Docs" className="toolIcon">
-                              <Icon>
-                                <FileCopyRounded />
-                              </Icon>
-                            </Tooltip>
-                            <Tooltip title="Download" placement="top" aria-label="Download" className="toolIcon">
-                              <Icon>
-                                <CloudDownloadRounded />
-                              </Icon>
-                            </Tooltip>
+                            {
+                              isAudio(sermon.sermonFileName) ?
+                                <Tooltip title="Audio" placement="top" aria-label="Audio" className="toolIcon">
+                                  <IconButton onClick={() => router.push(`/sermons?id=${sermon.id}`)}>
+                                    <HeadsetMicRounded />
+                                  </IconButton>
+                                </Tooltip>
+                                :
+                                <Tooltip title="video" placement="top" aria-label="Video" className="toolIcon">
+                                  <IconButton onClick={() => router.push(`/sermons?id=${sermon.id}`)}>
+                                    <VideocamRounded />
+                                  </IconButton>
+                                </Tooltip>
+                            }
                           </div>
 
                           <div className={styles.title}>

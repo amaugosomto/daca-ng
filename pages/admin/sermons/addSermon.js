@@ -1,18 +1,29 @@
 import React, { useState, useEffect, useRef }  from 'react'
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import AdminLayout from '../../../components/Admin/AdminLayout';
 import { makeStyles } from '@material-ui/core/styles';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/router';
 import { Button, Grid, TextField, Typography } from '@material-ui/core';
+import ReactPlayer from 'react-player';
 
 import validators from '../../../middlewares/validators';
-import AudioPlayer from 'material-ui-audio-player';
 import api from '../../../middlewares/axiosConfig';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
     minWidth: '100%',
+  },
+  sermonAudioPlayer: {
+    '& div': {
+      width: '100% !important',
+      height: '100px !important'
+    }
+  },
+  sermonVideoPlayer: {
+    '& div': {
+      width: '100% !important',
+    }
   }
 }));
 
@@ -20,9 +31,9 @@ export const addSermon = (props) => {
   const classes = useStyles();
   const router = useRouter();
   const fileRef = useRef();
-  let editClassId = 0;
-  const dispatch = useDispatch();
 
+  const audioExtensions = ["wav", "mp3", "m3u"];
+  const videoExtensions = ["mp4", "webm", "ogv"];
   const detailedSermons = useSelector(state => state.sermonReducer.detailedSermons);
 
   useEffect(() => {
@@ -33,6 +44,7 @@ export const addSermon = (props) => {
   const [formValues, setFormValues] = useState({
     file: "",
     imageSrc: "",
+    // imageSrc: "https://storage.googleapis.com/media-session/elephants-dream/the-wires.mp3",
     id: 0,
     sermonDesc: '',
     sermonTitle: '',
@@ -53,7 +65,8 @@ export const addSermon = (props) => {
     titleErrorMsg: '',
     tutorError: false,
     tutorErrorMsg: '',
-    formHeader: 'Add Sermon'
+    formHeader: 'Add Sermon',
+    isAudio: true
   });
 
   const fileOnChange = (e) => {
@@ -69,27 +82,30 @@ export const addSermon = (props) => {
 
     extention = fileName.substring(lastDot + 1).toLowerCase();
 
-    if (extention == "wav" || extention == "mp3" || extention == "m3u") {
+    let isValidAudioExtension = audioExtensions.find(audio => audio == extention);
+    let isValidVideoExtension = videoExtensions.find(video => video == extention);
+
+    if (isValidAudioExtension != undefined || isValidVideoExtension != undefined) {
       var reader = new FileReader();
       reader.onload = function (e) {
         setFormValues({ ...formValues, imageSrc: e.target.result,
           file: files[0], fileName: files[0].name, 
           isNewFileUpload : getSermonIdFromRoute() ? true : false });
-        
+
+        setFormStates({ ...formStates, isAudio: isValidAudioExtension ? true: false });
       }
       reader.readAsDataURL(files[0]);
 
     } else {
       Swal.fire({
         title: 'error',
-        text: 'please select only audio files with extentions of wav, mp3, and m3u',
+        text: 'please select only audio files with extentions of wav, mp3, and m3u or video files with mp4, webm, ogv',
         icon: 'error',
         showCloseButton: true
       });
 
       return;
     }
-    
   }
 
   const checkIfEdit = async () => {
@@ -97,7 +113,6 @@ export const addSermon = (props) => {
     let localDetailedSermons = [...detailedSermons];
 
     if (sermonId && localDetailedSermons.length < 1) {
-      setFormStates({ ...formStates, buttonState: false, formHeader: 'Update Sermon' });
 
       let userClass = await api.get(`/sermons/getSermon/${sermonId}`).
         then(res => res)
@@ -113,6 +128,12 @@ export const addSermon = (props) => {
         });
 
       let data = userClass.data.data;
+      let lastDot = data.sermonFileName.split("uploads")[1].lastIndexOf('.');
+      let extention = data.sermonFileName.split("uploads")[1].substring(lastDot + 1).toLowerCase();
+  
+      let isValidAudioExtension = audioExtensions.find(audio => audio == extention);
+      
+      setFormStates({ ...formStates, isAudio: isValidAudioExtension ? true: false, buttonState: false, formHeader: 'Update Sermon' });
       setData(data);
 
     } else if (localDetailedSermons.length > 0) {
@@ -136,7 +157,7 @@ export const addSermon = (props) => {
 
     copiedData.fileName = audioName;
     copiedData.imageSrc = `${domain}/${data.sermonFileName}`;
-
+    
     setFormValues(copiedData);
   }
 
@@ -311,7 +332,7 @@ export const addSermon = (props) => {
          {formStates.formHeader}
       </Typography>
       <Grid container>
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={5}>
           <div style={{paddingRight: '1rem'}}>
             <label htmlFor="btn-upload">
               <input
@@ -325,6 +346,7 @@ export const addSermon = (props) => {
               <Button
                 className="btn-choose"
                 variant="outlined"
+                size="small"
                 component="span" >
                 Choose Files
               </Button>
@@ -332,24 +354,26 @@ export const addSermon = (props) => {
 
             {formValues.imageSrc ? (
               
-              <div style={{marginTop: '2rem'}}>
+              <div className={formStates.isAudio ? classes.sermonAudioPlayer : classes.sermonVideoPlayer} style={{marginTop: '2rem'}}>
                 <p>{formValues.fileName}</p>
-                <AudioPlayer 
-                  src={formValues.imageSrc}
+                <ReactPlayer 
+                  url={formValues.imageSrc}
                   className={classes.audio}
-                  elevation={0}
-                  rounded={true}
-                  download={true}
+                  controls={true}
+                  // elevation={0}
+                  // rounded={true}
+                  // download={true}
                 />
               </div>
             ) : (
               <span>No file selected</span>
             )}
+
           </div>
         </Grid>
-        <Grid item xs={12} sm={8}>
-          <Grid container>
-            <Grid item xs={12} md={5} style={{paddingRight: '1rem'}}>
+        <Grid item xs={12} sm={7}>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
               <TextField 
                 fullWidth 
                 id="sermon_title"
@@ -363,7 +387,7 @@ export const addSermon = (props) => {
                 value={formValues.sermonTitle}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4} style={{paddingLeft: '1rem'}}>
+            <Grid item xs={12} sm={6}>
               <TextField 
                 fullWidth 
                 id="sermon_tutor" 
@@ -376,7 +400,7 @@ export const addSermon = (props) => {
                 value={formValues.sermonPreacher}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={3} style={{paddingLeft: '1rem'}}>
+            <Grid item xs={12} sm={6}>
               <TextField 
                 fullWidth 
                 id="category"
@@ -386,7 +410,7 @@ export const addSermon = (props) => {
                 value={formValues.category}
               />
             </Grid>
-            <Grid item xs={12} style={{marginTop: '1rem'}}>
+            <Grid item xs={12}>
               <TextField
                 placeholder="Description"
                 multiline
